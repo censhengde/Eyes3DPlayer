@@ -31,33 +31,25 @@ public final class EyesPlayer implements LifecycleObserver {
     private Context mContext;
     private String mPath;
     private Surface mSurface;
-
     @Nullable
     private GLSurfaceView mGLSurfaceView;
-
-    public void setEngine(@Nullable IPlayerEngine engine, boolean is3D) {
-        if (engine == null) {
-            engine = new SystemPlayerEngine(mContext);
-        }
-        mPlayerEngine = engine;
-        mPlayerEngine.setDataSource(mPath);
-        if (is3D) {
-            mPlayerEngine.setSurface(mSurface);
-        } else {
-            mPlayerEngine.setDisplay(mHolder);
-        }
-    }
 
     public IPlayerEngine getEngine() {
         return mPlayerEngine;
     }
 
-    /*2D*/
+    /*2D 三参数*/
     private EyesPlayer(LifecycleOwner owner, SurfaceView view, String path) {
-        this(null, owner, path);
+        this(null, owner, view, path);
+    }
+
+    /*2D 四参数*/
+    private EyesPlayer(IPlayerEngine engine, LifecycleOwner owner, SurfaceView view, String path) {
+        this(engine, owner, path);
         mHolder = view.getHolder();
     }
 
+    /*公用构造器*/
     private EyesPlayer(@Nullable IPlayerEngine engine, LifecycleOwner owner, String path) {
         owner.getLifecycle().addObserver(this);
         if (owner instanceof AppCompatActivity) {
@@ -76,29 +68,38 @@ public final class EyesPlayer implements LifecycleObserver {
         mPlayerEngine.setDataSource(mPath);
     }
 
-    /*3D*/
+    /*3D 四参数*/
     private EyesPlayer(@NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
-        this(null, owner, path);
-        mGLSurfaceView = view;
-        mSurface = renderer.getSurface();
-        mPlayerEngine.setSurface(mSurface);
+        this(null, owner, view, renderer, path);
     }
 
-    private EyesPlayer( IPlayerEngine engine,@NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
+    /*3D 五参数*/
+    private EyesPlayer(IPlayerEngine engine, @NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
         this(engine, owner, path);
         mGLSurfaceView = view;
+        mGLSurfaceView.setRenderer(renderer);/*启动GL线程*/
         mSurface = renderer.getSurface();
         mPlayerEngine.setSurface(mSurface);
     }
 
     /*创建2D播放器*/
-    public static EyesPlayer create2D(@NonNull LifecycleOwner owner, SurfaceView view, String path) {
+    public static EyesPlayer create2D(@NotNull LifecycleOwner owner, SurfaceView view, String path) {
         return new EyesPlayer(owner, view, path);
     }
 
+    /*创建2D播放器*/
+    public static EyesPlayer create2D(@Nullable IPlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
+        return new EyesPlayer(engine, owner, view, path);
+    }
+
     /*创建3D播放器*/
-    public static EyesPlayer create3D(LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
+    public static EyesPlayer create3D(@NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
         return new EyesPlayer(owner, view, renderer, path);
+    }
+
+    /*创建3D播放器*/
+    public static EyesPlayer create3D(@Nullable IPlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
+        return new EyesPlayer(engine, owner, view, renderer, path);
     }
 
 
@@ -124,57 +125,4 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
 
-    public static Engine2DBuilder get2DBuilder() {
-        return new Engine2DBuilder();
-    }
-
-
-    static class Builder<T extends Builder> {
-        IPlayerEngine mEngine;
-
-        public T setEngine(IPlayerEngine engine) {
-            this.mEngine = engine;
-            return (T) this;
-        }
-
-        public T setDataSource(String path) {
-            this.mEngine.setDataSource(path);
-            return (T) this;
-        }
-
-        public EyesPlayer buildEngine() {
-            return null;
-        }
-    }
-
-    public static class Engine3DBuilder extends Builder<Engine3DBuilder> {
-        IEyes3DRenderer mRenderer;
-        private GLSurfaceView mGLView;
-
-
-        public Engine3DBuilder setSurface(Surface surface) {
-            this.mEngine.setSurface(surface);
-            return this;
-        }
-
-        public Engine3DBuilder setRenderer(IEyes3DRenderer renderer) {
-            this.mRenderer = renderer;
-            return this;
-        }
-
-        public Engine3DBuilder setGLSurfaceView(GLSurfaceView view) {
-            this.mGLView = view;
-            return this;
-        }
-
-    }
-
-    public static class Engine2DBuilder extends Builder<Engine2DBuilder> {
-
-
-        public Engine2DBuilder setDisplay(SurfaceHolder holder) {
-            super.mEngine.setDisplay(holder);
-            return this;
-        }
-    }
 }
