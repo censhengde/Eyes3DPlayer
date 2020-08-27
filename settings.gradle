@@ -1,0 +1,2 @@
+rootProject.name='Eyes3DPlayer'
+include ':app'
