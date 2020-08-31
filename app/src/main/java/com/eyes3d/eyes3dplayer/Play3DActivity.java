@@ -16,7 +16,7 @@ public class Play3DActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Eyes3DSurfaceView glsfv = findViewById(R.id.glsfv);
-        mDPlayer = EyesPlayer.create3D(this, glsfv,
+         EyesPlayer.create3D(this, glsfv,
                 new Eyes3DRenderer(glsfv, R.raw.gl_3d_render_vert_shader, R.raw.gl_3d_render_frag_shader),
                 path);
     }

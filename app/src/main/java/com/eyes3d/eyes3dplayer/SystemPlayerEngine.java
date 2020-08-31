@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 
@@ -24,9 +28,16 @@ final class SystemPlayerEngine implements IPlayerEngine {
     private PlayerStateApt mApt;
     private Context mContext;
 
-    SystemPlayerEngine(Context context) {
-        mContext = context;
-        mApt = new PlayerStateApt(context);
+    SystemPlayerEngine(Object observer) {
+
+        if (observer instanceof AppCompatActivity) {
+            mContext = ((AppCompatActivity) observer).getApplicationContext();
+        } else if (observer instanceof Fragment) {
+            mContext = ((Fragment) observer).getActivity().getApplicationContext();
+        } else {
+            throw new RuntimeException("LifecycleOwner 必须是Activity/Fragment");
+        }
+        mApt = new PlayerStateApt(observer);
         initPlayer();
     }
 
@@ -37,14 +48,34 @@ final class SystemPlayerEngine implements IPlayerEngine {
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mApt.invokeOnPrepared();
+                mApt.invokeOnPrepared(SystemPlayerEngine.this);
+            }
+        });
+        mPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            /*返回true则处理，false则丢弃*/
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                switch (what) {
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                        //开始缓存，暂停播放
+                        mApt.invokeOnBufferingStart(SystemPlayerEngine.this);
+                        break;
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                        //缓存完成，继续播放
+                        mApt.invokeOnBufferingEnd(SystemPlayerEngine.this,mPlayer.getCurrentPosition());
+                        break;
+                    default:
+                        break;
+                }
+
+                return true;
             }
         });
         // 播放完毕
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mApt.invokeOnCompletion();
+                mApt.invokeOnCompletion(SystemPlayerEngine.this);
             }
         });
         //尺寸变化
@@ -54,10 +85,14 @@ final class SystemPlayerEngine implements IPlayerEngine {
                 mApt.invokeOnVideoSizeChanged(width, height);
             }
         });
-//        if (mView instanceof GLSurfaceView) {
-//            mPlayer.setSurface(mView.gets);
-//        }
-
+        /*拦截错误：当有错误时，true表示拦截，false=不拦截，并调用OnCompletionListener*/
+        mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                    mApt.invokeOnError(SystemPlayerEngine.this,what);
+                return true;
+            }
+        });
     }
 
     @Override
