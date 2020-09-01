@@ -1,19 +1,12 @@
 package com.eyes3d.eyes3dplayer;
 
-import android.content.Context;
-import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
@@ -28,17 +21,14 @@ import org.jetbrains.annotations.NotNull;
 public final class EyesPlayer implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
     private IPlayerEngine mPlayerEngine;
-//    private String mPath;
-
+    private PlayerController mPlayerController;
     /*采用缓存池减少对IPlayerEngine的创建*/
     private final ArrayMap<Object, IPlayerEngine> mPlayerEngineMap = new ArrayMap<>();
 
-    private static final EyesPlayer INSTANCE = new EyesPlayer();
 
     private EyesPlayer() {
     }
 
-    //    private Surface mSurface;
     @Nullable
     private GLSurfaceView mGLSurfaceView;
 
@@ -67,6 +57,7 @@ public final class EyesPlayer implements LifecycleObserver {
         mPlayerEngine = engine;
         mPlayerEngine.setDataSource(path);
         mPlayerEngine.prepareAsync();
+        mPlayerController = new PlayerControllerImpl(mPlayerEngine);
     }
 
     /*3D 四参数*/
@@ -79,36 +70,37 @@ public final class EyesPlayer implements LifecycleObserver {
         commonInit(engine, owner, path);
         mGLSurfaceView = view;
         view.setRenderer(renderer);/*启动GL线程*/
-//        mSurface = renderer.getSurface();
         mPlayerEngine.setSurface(renderer.getSurface());
     }
 
     /*创建2D播放器*/
-    public static void create2D(@NotNull LifecycleOwner owner, SurfaceView view, String path) {
-        INSTANCE.create2DEngine(owner, view, path);
+    public static PlayerController create2D(@NotNull LifecycleOwner owner, SurfaceView view, String path) {
+       return create2D(null,owner,view,path);
     }
 
     /*创建2D播放器*/
-    public static void create2D(@Nullable IPlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
-        INSTANCE.create2DEngine(engine, owner, view, path);
+    public static PlayerController create2D(@Nullable IPlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
+        EyesPlayer player = new EyesPlayer();
+        player.create2DEngine(engine,owner, view, path);
+        return player.mPlayerController;
     }
 
     /*创建3D播放器*/
-    public static void create3D(@NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
-//        return new EyesPlayer(owner, view, renderer, path);
-        INSTANCE.create3DEngine(owner, view, renderer, path);
+    public static PlayerController create3D(@NotNull LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
+        return create3D(null,owner,view,renderer,path);
     }
 
     /*创建3D播放器*/
-    public static void create3D(@Nullable IPlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
-//        return new EyesPlayer(engine, owner, view, renderer, path);
-        INSTANCE.create3DEngine(engine, owner, view, renderer, path);
+    public static PlayerController create3D(@Nullable IPlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, IEyes3DRenderer renderer, String path) {
+        EyesPlayer player = new EyesPlayer();
+        player.create3DEngine(engine,owner, view,renderer, path);
+        return player.mPlayerController;
     }
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void onResume() {
-        Log.e(TAG,"onResume");
+        Log.e(TAG, "onResume");
         if (mGLSurfaceView != null) {
             mGLSurfaceView.onResume();
         }
@@ -117,7 +109,7 @@ public final class EyesPlayer implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private void onPause() {
-        Log.e(TAG,"onPause执行");
+        Log.e(TAG, "onPause执行");
         if (mGLSurfaceView != null) {
             mGLSurfaceView.onPause();
         }
@@ -131,10 +123,55 @@ public final class EyesPlayer implements LifecycleObserver {
 
     public void release() {
         if (mPlayerEngine != null) {
+            mPlayerEngine.reset();
             mPlayerEngine.release();
             mPlayerEngine = null;
         }
-            mGLSurfaceView = null;
-
+        mGLSurfaceView = null;
+        mPlayerController = null;
     }
+
+    private static class PlayerControllerImpl implements PlayerController {
+        private final IPlayerEngine mEngine;
+
+        PlayerControllerImpl(IPlayerEngine engine) {
+            this.mEngine = engine;
+        }
+
+        @Override
+        public void start() {
+            mEngine.start();
+        }
+
+        @Override
+        public void pause() {
+            mEngine.pause();
+        }
+
+        @Override
+        public void stop() {
+            mEngine.stop();
+        }
+
+        @Override
+        public void reset() {
+            mEngine.reset();
+        }
+
+        @Override
+        public long getCurrentPosition() {
+            return mEngine.getCurrentPosition();
+        }
+
+        @Override
+        public long getDuration() {
+            return mEngine.getDuration();
+        }
+
+        @Override
+        public void seekTo(int msec) {
+            mEngine.seekTo(msec);
+        }
+    }
+
 }

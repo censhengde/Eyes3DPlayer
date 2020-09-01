@@ -13,15 +13,16 @@ import java.lang.reflect.Method;
  * 说明：PlayerState注解处理器
  */
 public final class PlayerStateApt {
-    private static final String TAG="PlayerStateApt===>";
+    private static final String TAG = "PlayerStateApt===>";
     @NonNull
-    final WeakReference<Object> oWnerRef;
+    private final WeakReference<Object> oWnerRef;
 
-    private Method onCompletionM, onBufferingStartM, onBufferingEndM, onPreparedM, onVideoSizeChangedM, onErrorM;
+    private Method onCompletionM, onBufferingStartM,
+            onBufferingEndM, onPreparedM, onVideoSizeChangedM, onBufferingUpdateM, onErrorM;
 
     public PlayerStateApt(Object observer) {
         this.oWnerRef = new WeakReference<>(observer);
-        Class clz = oWnerRef.get().getClass();
+        Class<?> clz = oWnerRef.get().getClass();
         Method[] methods = clz.getMethods();//要求注解方法必须是pubic
         for (Method m : methods) {
             PlayerState annoState = m.getAnnotation(PlayerState.class);
@@ -40,6 +41,9 @@ public final class PlayerStateApt {
                     case ON_BUFFERING_END:
                         onBufferingEndM = m;
                         break;
+                    case ON_BUFFERING_UPDATE:
+                        onBufferingUpdateM = m;
+                        break;
                     case ON_VIDEO_SIZE_CHANGED:
                         onVideoSizeChangedM = m;
                         break;
@@ -53,16 +57,16 @@ public final class PlayerStateApt {
         }
     }
 
-    void invokeOnCompletion(IPlayerEngine engine) {
-        invokeTargetMethod(onCompletionM, engine);
+    public void invokeOnCompletion(PlayerController playerController) {
+        invokeTargetMethod(onCompletionM, playerController);
     }
 
-    void invokeOnBufferingStart(IPlayerEngine engine) {
-        invokeTargetMethod(onBufferingStartM, engine);
+    public void invokeOnBufferingStart(PlayerController playerController) {
+        invokeTargetMethod(onBufferingStartM, playerController);
     }
 
-    void invokeOnBufferingEnd(IPlayerEngine engine, int currentPosition) {
-        invokeTargetMethod(onBufferingEndM, engine,currentPosition);
+    public void invokeOnBufferingEnd(PlayerController playerController, long currentPosition) {
+        invokeTargetMethod(onBufferingEndM, playerController, currentPosition);
     }
 
     private void invokeTargetMethod(Method target, Object... args) {
@@ -74,20 +78,26 @@ public final class PlayerStateApt {
                 target.invoke(oWnerRef.get(), args);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
-               throw new RuntimeException(TAG+"异常");
+                throw new RuntimeException(TAG + "异常");
             }
         }
     }
 
-    void invokeOnPrepared(IPlayerEngine engine) {
-        invokeTargetMethod(onPreparedM, engine);
+    public void invokeOnPrepared(PlayerController playerController) {
+        invokeTargetMethod(onPreparedM, playerController);
     }
 
-    void invokeOnVideoSizeChanged(int width, int height) {
-        invokeTargetMethod(onVideoSizeChangedM, width, height);
+    public void invokeOnBufferingUpdata(PlayerController playerCtrl) {
+        invokeTargetMethod(onBufferingUpdateM, playerCtrl);
     }
 
-    public void invokeOnError(IPlayerEngine engine,int err) {
-        invokeTargetMethod(onErrorM, engine,err);
+    public void invokeOnVideoSizeChanged(PlayerController playerCtrl, int width, int height) {
+        invokeTargetMethod(onVideoSizeChangedM, playerCtrl, width, height);
     }
+
+    public void invokeOnError(PlayerController playerController, int err) {
+        invokeTargetMethod(onErrorM, playerController, err);
+    }
+
+
 }

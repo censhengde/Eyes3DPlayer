@@ -32,12 +32,14 @@ public class Base3DRenderer implements IEyes3DRenderer, SurfaceTexture.OnFrameAv
     @Override
     public @NonNull
     Surface getSurface() {
+        synchronized (mLock){
         if (mSurface == null) {
             try {
                 mLock.wait();//等待mSurface初始化完成
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
         }
         return mSurface;
     }

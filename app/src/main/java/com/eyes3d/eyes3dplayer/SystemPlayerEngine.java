@@ -13,23 +13,24 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Shengde·Cen on 2020/8/14
  * 说明：系统原生播放引擎
  */
-final class SystemPlayerEngine implements IPlayerEngine {
+final class SystemPlayerEngine extends AbstractPlayerEngine {
     private static String TAG = "SystemPlayerEngine===>";
     private MediaPlayer mPlayer;
-    private PlayerStateApt mApt;
     private Context mContext;
 
-    SystemPlayerEngine(Object observer) {
-
+   public SystemPlayerEngine(Object observer) {
+       super(observer);
         if (observer instanceof AppCompatActivity) {
             mContext = ((AppCompatActivity) observer).getApplicationContext();
         } else if (observer instanceof Fragment) {
@@ -37,11 +38,10 @@ final class SystemPlayerEngine implements IPlayerEngine {
         } else {
             throw new RuntimeException("LifecycleOwner 必须是Activity/Fragment");
         }
-        mApt = new PlayerStateApt(observer);
-        initPlayer();
+
     }
 
-    private void initPlayer() {
+    protected void initPlayer() {
         mPlayer = new MediaPlayer();
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         //准备完成
@@ -62,7 +62,7 @@ final class SystemPlayerEngine implements IPlayerEngine {
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                         //缓存完成，继续播放
-                        mApt.invokeOnBufferingEnd(SystemPlayerEngine.this,mPlayer.getCurrentPosition());
+                        mApt.invokeOnBufferingEnd(SystemPlayerEngine.this, mPlayer.getCurrentPosition());
                         break;
                     default:
                         break;
@@ -82,14 +82,14 @@ final class SystemPlayerEngine implements IPlayerEngine {
         mPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                mApt.invokeOnVideoSizeChanged(width, height);
+                mApt.invokeOnVideoSizeChanged(SystemPlayerEngine.this,width, height);
             }
         });
         /*拦截错误：当有错误时，true表示拦截，false=不拦截，并调用OnCompletionListener*/
         mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                    mApt.invokeOnError(SystemPlayerEngine.this,what);
+                mApt.invokeOnError(SystemPlayerEngine.this, what);
                 return true;
             }
         });
@@ -97,11 +97,21 @@ final class SystemPlayerEngine implements IPlayerEngine {
 
     @Override
     public void setDataSource(String path) {
+        this.setDataSource(path, null);
+
+    }
+
+
+    public void setDataSource(String path, @Nullable Map<String, String> headers) {
         try {
             if (path.contains("https://") || path.contains("http://") || path.contains("content://")
                     || path.contains("/storage/")) {
                 Uri uri = Uri.parse(path);
-                mPlayer.setDataSource(mContext, uri);
+                if (headers == null) {
+                    mPlayer.setDataSource(mContext, uri);
+                } else {
+                    mPlayer.setDataSource(mContext, uri, headers);
+                }
                 Log.e("wangguojing", "initMediaPlayer 222222223 uri=" + uri);
             } else {
                 AssetManager assetMg = mContext.getAssets();
@@ -112,7 +122,6 @@ final class SystemPlayerEngine implements IPlayerEngine {
             Log.e(TAG, "setDataSource 异常");
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -161,12 +170,12 @@ final class SystemPlayerEngine implements IPlayerEngine {
     }
 
     @Override
-    public int getCurrentPosition() {
+    public long getCurrentPosition() {
         return mPlayer.getCurrentPosition();
     }
 
     @Override
-    public int getDuration() {
+    public long getDuration() {
         return mPlayer.getDuration();
     }
 

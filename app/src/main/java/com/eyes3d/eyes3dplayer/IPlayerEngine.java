@@ -6,32 +6,19 @@ import android.view.SurfaceHolder;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
 
+import java.util.Map;
+
 /**
  * Shengde·Cen on 2020/8/14
  * 说明：
  */
-public interface IPlayerEngine {
+public interface IPlayerEngine extends PlayerController{
     void setDataSource(String path);
-
+    void setDataSource(String path, Map<String,String> headers);
     void prepareAsync();
-
-    void start();
-
-    void pause();
-
-    void stop();
-
-    void reset();
-
     void release();
 
     boolean isPlaying();
-
-    int getCurrentPosition();
-
-    int getDuration();
-
-    void seekTo(int msec) throws IllegalStateException;
 
     void setSurface(Surface surface);
 
