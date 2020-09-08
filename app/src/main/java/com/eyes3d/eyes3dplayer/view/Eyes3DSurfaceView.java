@@ -1,9 +1,11 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.view;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.Surface;
+
+import com.eyes3d.eyes3dplayer.Base3DRenderer;
 
 /**
  * Shengde·Cen on 2020/8/20

@@ -1,4 +1,4 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
  * Shengde·Cen on 2020/9/1
  * 说明：
  */
-public class EyesVideoView extends RelativeLayout {
+public class BaseVideoView extends RelativeLayout {
     private static final String TAG = "VideoView===========>";
     private SurfaceView mSurfaceView;
 
@@ -26,19 +26,19 @@ public class EyesVideoView extends RelativeLayout {
     private BufferingProgressBar mBufferingProgressBar;
 
 
-    public EyesVideoView(Context context) {
+    public BaseVideoView(Context context) {
         this(context, null);
     }
 
-    public EyesVideoView(Context context, AttributeSet attrs) {
+    public BaseVideoView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EyesVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BaseVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public EyesVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BaseVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
     }
@@ -56,6 +56,14 @@ public class EyesVideoView extends RelativeLayout {
     }
 
     private void initProgressBar() {
+
+    }
+
+
+    public void pause(){
+
+    }
+    public void start(){
 
     }
 

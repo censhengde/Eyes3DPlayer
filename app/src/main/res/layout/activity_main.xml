@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Play3DActivity">
 
-    <com.eyes3d.eyes3dplayer.Eyes3DSurfaceView
+    <com.eyes3d.eyes3dplayer.view.Eyes3DSurfaceView
         android:id="@+id/glsfv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

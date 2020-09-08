@@ -1,5 +1,7 @@
 package com.eyes3d.eyes3dplayer;
 
+import com.eyes3d.eyes3dplayer.view.Eyes3DSurfaceView;
+
 public class Play3DActivity extends BasePlay2DActivity {
     private static final String TAG = "Play3DActivity===>";
 
