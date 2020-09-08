@@ -10,33 +10,45 @@ import android.widget.RelativeLayout;
  * Shengde·Cen on 2020/9/1
  * 说明：
  */
-public class VideoView extends RelativeLayout implements PlayerController{
+public class EyesVideoView extends RelativeLayout {
     private static final String TAG = "VideoView===========>";
+    private SurfaceView mSurfaceView;
 
-    public VideoView(Context context) {
+    /*音量条*/
+    private EyesVolumeBar mVolumeBar;
+    /*屏幕亮度条*/
+    private EyesScreenBringhtnessBar mBringhtnessBar;
+    /*底部操作栏*/
+    private EyesVideoBottomLayout mBottomLayout;
+    /*顶部操作栏*/
+    private EyesVideoTopLayout mTopLayout;
+    /*缓冲进度条*/
+    private BufferingProgressBar mBufferingProgressBar;
+
+
+    public EyesVideoView(Context context) {
         this(context, null);
     }
 
-    public VideoView(Context context, AttributeSet attrs) {
+    public EyesVideoView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public VideoView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EyesVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public VideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public EyesVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
     }
 
     private void initSurfaceView(Context context) {
-        SurfaceView sf = new SurfaceView(context);
         final WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        sf.setLayoutParams(lp);
-        this.addView(sf);
+        mSurfaceView.setLayoutParams(lp);
+        this.addView(mSurfaceView);
     }
 
     private void initSeekBar(Context context) {
@@ -47,39 +59,4 @@ public class VideoView extends RelativeLayout implements PlayerController{
 
     }
 
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void stop() {
-
-    }
-
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
-    public long getCurrentPosition() {
-        return 0;
-    }
-
-    @Override
-    public long getDuration() {
-        return 0;
-    }
-
-    @Override
-    public void seekTo(int msec) {
-
-    }
 }
