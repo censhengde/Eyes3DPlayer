@@ -16,7 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Shengde·Cen on 2020/8/24
  * 说明：
  */
-public class Base3DRenderer implements IEyes3DRenderer, SurfaceTexture.OnFrameAvailableListener {
+public class Base3DRenderer implements Eyes3DRenderer, SurfaceTexture.OnFrameAvailableListener {
 
     private SurfaceTexture mSurfaceTexture;
     private GLSurfaceView mGLSurfaceView;

@@ -13,7 +13,7 @@ public interface PlayerController {
     void stop();
 
     void reset();
-
+    boolean isPlaying();
     long getCurrentPosition();
 
     long getDuration();

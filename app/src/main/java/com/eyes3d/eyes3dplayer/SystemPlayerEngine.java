@@ -29,15 +29,9 @@ final class SystemPlayerEngine extends AbstractPlayerEngine {
     private MediaPlayer mPlayer;
     private Context mContext;
 
-   public SystemPlayerEngine(Object observer) {
+   public SystemPlayerEngine(Context context,Object observer) {
        super(observer);
-        if (observer instanceof AppCompatActivity) {
-            mContext = ((AppCompatActivity) observer).getApplicationContext();
-        } else if (observer instanceof Fragment) {
-            mContext = ((Fragment) observer).getActivity().getApplicationContext();
-        } else {
-            throw new RuntimeException("LifecycleOwner 必须是Activity/Fragment");
-        }
+       mContext=context;
 
     }
 
@@ -112,7 +106,6 @@ final class SystemPlayerEngine extends AbstractPlayerEngine {
                 } else {
                     mPlayer.setDataSource(mContext, uri, headers);
                 }
-                Log.e("wangguojing", "initMediaPlayer 222222223 uri=" + uri);
             } else {
                 AssetManager assetMg = mContext.getAssets();
                 AssetFileDescriptor fileDescriptor = assetMg.openFd(path);

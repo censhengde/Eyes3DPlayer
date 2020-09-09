@@ -18,7 +18,7 @@ public interface IPlayerEngine extends PlayerController{
     void prepareAsync();
     void release();
 
-    boolean isPlaying();
+
 
     void setSurface(Surface surface);
 
