@@ -12,9 +12,9 @@ public class Play3DActivity extends BasePlay2DActivity {
     protected void initLayout() {
         setContentView(R.layout.activity_main);
         Eyes3DVedioView glsfv = findViewById(R.id.glsfv);
-        mPlayerCtrl = EyesPlayer.create3D(this, this,glsfv,
-                new Eyes3DRendererImpl(glsfv, R.raw.gl_3d_render_vert_shader, R.raw.gl_3d_render_frag_shader),
-                path);
+//        mPlayerCtrl = EyesPlayer.create3D(this, this,glsfv,
+//                new Eyes3DRendererImpl(glsfv, R.raw.gl_3d_render_vert_shader, R.raw.gl_3d_render_frag_shader),
+//                path);
     }
 
     @Override

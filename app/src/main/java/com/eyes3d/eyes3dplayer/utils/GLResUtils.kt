@@ -1,6 +1,6 @@
 @file:JvmName("GLResUtils")
 
-package com.eyes3d.eyes3dplayer
+package com.eyes3d.eyes3dplayer.utils
 
 import android.content.Context
 import android.graphics.Bitmap

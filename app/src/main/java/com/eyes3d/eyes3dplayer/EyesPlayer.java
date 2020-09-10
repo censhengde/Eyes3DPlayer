@@ -15,6 +15,10 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
+import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
+import com.eyes3d.eyes3dplayer.engine.SystemPlayerEngine;
+import com.eyes3d.eyes3dplayer.renderer.Eyes3DRenderer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,10 +27,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class EyesPlayer implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
-    private IPlayerEngine mPlayerEngine;
+    private PlayerEngine mPlayerEngine;
     private PlayerController mPlayerController;
     /*采用缓存池减少对IPlayerEngine的创建*/
-    private final ArrayMap<Object, IPlayerEngine> mPlayerEngineMap = new ArrayMap<>();
+    private final ArrayMap<Object, PlayerEngine> mPlayerEngineMap = new ArrayMap<>();
 
 
     private EyesPlayer() {
@@ -35,7 +39,7 @@ public final class EyesPlayer implements LifecycleObserver {
     @Nullable
     private GLSurfaceView mGLSurfaceView;
 
-    public IPlayerEngine getEngine() {
+    public PlayerEngine getEngine() {
         return mPlayerEngine;
     }
 
@@ -45,13 +49,13 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
     /*2D 四参数*/
-    private void create2DEngine(IPlayerEngine engine, LifecycleOwner owner,Object observer,  SurfaceView view, String path) {
+    private void create2DEngine(PlayerEngine engine, LifecycleOwner owner, Object observer, SurfaceView view, String path) {
         commonInit(engine, owner,observer, path);
         view.getHolder().addCallback(new SurfaceHolderCallbackImpl(mPlayerEngine));
 
     }
 
-    private void commonInit(@Nullable IPlayerEngine engine, LifecycleOwner owner,Object observer, String path) {
+    private void commonInit(@Nullable PlayerEngine engine, LifecycleOwner owner, Object observer, String path) {
         owner.getLifecycle().addObserver(this);
         //engine=null就采用默认engine
         if (engine == null) {
@@ -84,7 +88,7 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
     /*3D 五参数*/
-    private void create3DEngine(IPlayerEngine engine, @NotNull LifecycleOwner owner, Object observer, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
+    private void create3DEngine(PlayerEngine engine, @NotNull LifecycleOwner owner, Object observer, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
         commonInit(engine, owner,observer, path);
         mGLSurfaceView = view;
         view.setRenderer(renderer);/*启动GL线程*/
@@ -97,7 +101,7 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
     /*创建2D播放器*/
-    public static PlayerController create2D(@Nullable IPlayerEngine engine, @NonNull LifecycleOwner owner,Object observer, SurfaceView view, String path) {
+    public static PlayerController create2D(@Nullable PlayerEngine engine, @NonNull LifecycleOwner owner, Object observer, SurfaceView view, String path) {
         EyesPlayer player = new EyesPlayer();
         player.create2DEngine(engine, owner, observer,view, path);
         return player.mPlayerController;
@@ -109,7 +113,7 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
     /*创建3D播放器*/
-    public static PlayerController create3D(@Nullable IPlayerEngine engine, LifecycleOwner owner, Object observer, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
+    public static PlayerController create3D(@Nullable PlayerEngine engine, LifecycleOwner owner, Object observer, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
         EyesPlayer player = new EyesPlayer();
         player.create3DEngine(engine, owner,observer, view, renderer, path);
         return player.mPlayerController;
@@ -154,9 +158,9 @@ public final class EyesPlayer implements LifecycleObserver {
     }
 
     private static class PlayerControllerImpl implements PlayerController {
-        private final IPlayerEngine mEngine;
+        private final PlayerEngine mEngine;
 
-        PlayerControllerImpl(IPlayerEngine engine) {
+        PlayerControllerImpl(PlayerEngine engine) {
             this.mEngine = engine;
         }
 

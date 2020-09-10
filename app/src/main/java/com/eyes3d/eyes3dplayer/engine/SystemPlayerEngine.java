@@ -1,4 +1,4 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.engine;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -6,16 +6,11 @@ import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,7 +19,7 @@ import java.util.Map;
  * Shengde·Cen on 2020/8/14
  * 说明：系统原生播放引擎
  */
-final class SystemPlayerEngine extends AbstractPlayerEngine {
+public final class SystemPlayerEngine extends AbstractPlayerEngine {
     private static String TAG = "SystemPlayerEngine===>";
     private MediaPlayer mPlayer;
     private Context mContext;

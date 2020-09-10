@@ -2,36 +2,35 @@ package com.eyes3d.eyes3dplayer.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
-import com.eyes3d.eyes3dplayer.view.EyesProgressBar;
 
 /**
  * Shengde·Cen on 2020/9/4
- * 说明：
+ * 说明：播放界面标题栏布局
  */
-public class EyesVideoBottomLayout extends FloatView {
-    /*播放进度条*/
-    private EyesProgressBar mProgressBar;
+public class EyesVideoTitleLayout extends FloatView {
+    private Button mBtnBack;
 
-    public EyesVideoBottomLayout(Context context) {
+    public EyesVideoTitleLayout(Context context) {
         super(context);
     }
 
-    public EyesVideoBottomLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public EyesVideoTitleLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     protected int setContentView() {
-        return R.layout.vedio_bottom_layout;
+        return R.layout.vedio_title_layout;
     }
 
     @Override
     protected void initView() {
-
+        mBtnBack = findViewById(R.id.btn_vedio_title_layout_back);
     }
 }

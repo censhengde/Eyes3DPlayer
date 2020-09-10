@@ -1,11 +1,13 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.renderer;
 
 import android.content.Context;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 
-import com.eyes3d.common.util.VertexArray;
+
+import com.eyes3d.eyes3dplayer.utils.GLApiUtils;
+import com.eyes3d.eyes3dplayer.utils.VertexArray;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

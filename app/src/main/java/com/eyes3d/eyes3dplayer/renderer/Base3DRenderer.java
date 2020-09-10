@@ -1,4 +1,4 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.renderer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -8,6 +8,8 @@ import android.opengl.GLSurfaceView;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
+
+import com.eyes3d.eyes3dplayer.utils.GLResUtils;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

@@ -5,6 +5,7 @@ package com.eyes3d.eyes3dplayer;
  * 说明：枚举播放器生命周期所有状态
  */
 public enum State {
+    ON_STARTED,
     ON_PREPARED,/*准备完成*/
     ON_COMPLETION,/*播放完毕*/
     ON_BUFFERING_START,/*开始缓冲*/

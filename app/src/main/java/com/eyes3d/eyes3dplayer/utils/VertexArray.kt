@@ -1,4 +1,4 @@
-package com.eyes3d.common.util
+package com.eyes3d.eyes3dplayer.utils
 
 import android.opengl.GLES20.*
 import java.nio.ByteBuffer

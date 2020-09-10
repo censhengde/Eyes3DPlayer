@@ -3,15 +3,17 @@ package com.eyes3d.eyes3dplayer;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
+
 /**
  * Shengde·Cen on 2020/8/31
  * 说明：
  */
 final class SurfaceHolderCallbackImpl implements SurfaceHolder.Callback {
     private static final String TAG = "SurfaceHolderCallback";
-    private final IPlayerEngine mEngine;
+    private final PlayerEngine mEngine;
 
-    SurfaceHolderCallbackImpl(IPlayerEngine engine) {
+    SurfaceHolderCallbackImpl(PlayerEngine engine) {
         mEngine = engine;
     }
 

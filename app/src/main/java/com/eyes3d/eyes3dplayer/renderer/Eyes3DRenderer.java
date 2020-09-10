@@ -1,4 +1,4 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.renderer;
 
 import android.opengl.GLSurfaceView;
 import android.view.Surface;

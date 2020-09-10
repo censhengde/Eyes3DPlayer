@@ -1,8 +1,12 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.utils;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.eyes3d.eyes3dplayer.PlayerController;
+import com.eyes3d.eyes3dplayer.PlayerState;
+import com.eyes3d.eyes3dplayer.State;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +21,7 @@ public final class PlayerStateApt {
     @NonNull
     private final WeakReference<Object> oWnerRef;
 
-    private Method onCompletionM, onBufferingStartM,
+    private Method onStartedM, onCompletionM, onBufferingStartM,
             onBufferingEndM, onPreparedM, onVideoSizeChangedM, onBufferingUpdateM, onErrorM;
 
     public PlayerStateApt(Object observer) {
@@ -29,6 +33,9 @@ public final class PlayerStateApt {
             if (annoState != null) {
                 State state = annoState.state();
                 switch (state) {
+                    case ON_STARTED:
+                        onStartedM = m;
+                        break;
                     case ON_PREPARED:
                         onPreparedM = m;
                         break;
@@ -55,6 +62,10 @@ public final class PlayerStateApt {
                 }
             }
         }
+    }
+
+    public void invokeOnStarted() {
+        invokeTargetMethod(onStartedM);
     }
 
     public void invokeOnCompletion(PlayerController playerController) {

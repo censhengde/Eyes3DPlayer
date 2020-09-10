@@ -11,49 +11,42 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.eyes3d.eyes3dplayer.EyesPlayer;
-import com.eyes3d.eyes3dplayer.IPlayerEngine;
+import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.State;
 
-import kotlin.internal.HidesMembers;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
 
 /**
  * Shengde·Cen on 2020/9/1
  * 说明：
  */
- abstract class BaseVideoView<V extends View> extends RelativeLayout {
+public abstract class BaseVideoView extends RelativeLayout {
     private static final String TAG = "VideoView===========>";
-    protected V mPlayView;
     protected Context mContext;
-    protected IPlayerEngine mEngine;
+    @Nullable
+    protected PlayerEngine mEngine;
+    @NonNls
     protected String mPath;
 
-    public void setEngine(IPlayerEngine engine) {
-        mEngine = engine;
-    }
-
-    /*音量条*/
-    private EyesVolumeBar mVolumeBar;
-    /*屏幕亮度条*/
-    private EyesScreenBringhtnessBar mBringhtnessBar;
-    /*底部操作栏*/
-    private EyesVideoBottomLayout mBottomLayout;
-    /*顶部操作栏*/
-    private EyesVideoTopLayout mTopLayout;
-    /*缓冲进度条*/
-    private BufferingProgressBar mBufferingProgressBar;
 
     private GestureDetector mGestureDetector;
-    private PlayerController mPlayerController;
+    protected PlayerController mPlayerController;
 
     public PlayerController getPlayerController() {
         checkNotNull(mPlayerController, "PlayerController为null,请先调用setDataSource");
         return mPlayerController;
     }
+
+    public abstract int setContentView();
 
     protected LifecycleOwner mLifecycleOwner;
 
@@ -73,55 +66,40 @@ import kotlin.internal.HidesMembers;
         super(context, attrs, defStyleAttr, defStyleRes);
         mContext = context;
         mGestureDetector = new GestureDetector(context, new SimpleOnGestureListenerImpl(this));
-        initSurfaceView(context);
-
+        View.inflate(context, setContentView(), this);
+        initView();
     }
 
-    private void initSurfaceView(Context context) {
-        mPlayView = setPlayView(context);
-        final WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        mPlayView.setLayoutParams(lp);
-        this.addView(mPlayView);
-    }
+    protected abstract void initView();
 
-    protected abstract V setPlayView(Context context);
 
-    public void addLifecycleOwner(LifecycleOwner owner) {
+    @SuppressWarnings("unchecked cast")
+    public <T extends BaseVideoView> T addLifecycleOwner(@NotNull LifecycleOwner owner) {
         checkNotNull(owner, "LifecycleOwner不允许为null");
         this.mLifecycleOwner = owner;
+        return (T) this;
     }
 
-    protected static void checkNotNull(Object o, String throwMsg) {
-        if (o == null) {
-            throw new RuntimeException(throwMsg);
-        }
+    @SuppressWarnings("unchecked cast")
+    public <T extends BaseVideoView> T setPlayerEngine(@NonNull PlayerEngine engine) {
+        mEngine = engine;
+        return (T) this;
     }
 
-    public void setDataSource(String path) {
-        checkNotNull(mLifecycleOwner, "请在调用setDataSource之前先调用addLifecycleOwner");
-        mPlayerController = initPlayer(mLifecycleOwner, mPlayView, path);
+    @SuppressWarnings("unchecked cast")
+    public <T extends BaseVideoView> T setDataSource(@NotNull String path) {
+        checkNotNull(path, "path 不允许为 null");
+        mPath = path;
+        return (T) this;
     }
 
-    @HidesMembers
-    public void createPlayerEngine(IPlayerEngine engine, LifecycleOwner owner, String path) {
-        this.mEngine = engine;
-        this.mLifecycleOwner = owner;
-        this.mPath = path;
-        this.mPlayerController = initPlayer(mLifecycleOwner, mPlayView,mPath);
+    public void createPlayer() {
+        mPlayerController = initPlayer();
     }
 
-    protected abstract PlayerController initPlayer(LifecycleOwner owner, V playView, String path);
+    protected abstract PlayerController initPlayer();
 
-    /*准备完毕·*/
-    @PlayerState(state = State.ON_PREPARED)
-    public void onPrepared(PlayerController playerCtrl) {
-        Log.e(TAG, "播放准备完毕");
-        playerCtrl.start();
-    }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
@@ -182,12 +160,10 @@ import kotlin.internal.HidesMembers;
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Log.e("====>", "onDoubleTap");
-            if (mVideoView.getPlayerController().isPlaying()) {
-                mVideoView.getPlayerController().pause();
-            } else {
-                mVideoView.getPlayerController().start();
+            if (mVideoView != null) {
+                return mVideoView.onDoubleTap(e);
             }
-            return true;
+            return false;
         }
 
         @Override
@@ -199,7 +175,7 @@ import kotlin.internal.HidesMembers;
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.e("====>", "onSingleTapConfirmed");
-            return true;
+            return mVideoView.onSingleTapConfirmed(e);
         }
 
         @Override
@@ -207,5 +183,13 @@ import kotlin.internal.HidesMembers;
             Log.e("====>", "onContextClick");
             return true;
         }
+    }
+
+    protected boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+
+    public boolean onDoubleTap(MotionEvent e) {
+        return false;
     }
 }

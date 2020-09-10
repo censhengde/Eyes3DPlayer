@@ -4,8 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
 
 public class BasePlay2DActivity extends AppCompatActivity {
 

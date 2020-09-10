@@ -14,9 +14,11 @@ public class TestVedioViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getWindow().getDecorView()
         setContentView(R.layout.activity_test_vedio_view);
         mVideoView = findViewById(R.id.eyesVedioView);
-        mVideoView.addLifecycleOwner(this);
-        mVideoView.setDataSource(mPath);
+//        mVideoView.addLifecycleOwner(this)
+//                .setDataSource(mPath)
+//                .createPlayer();
     }
 }

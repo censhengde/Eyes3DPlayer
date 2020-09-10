@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/sfv_vedio_2d"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--缓冲圈圈-->
+    <com.eyes3d.eyes3dplayer.view.VedioBufferingView
+        android:id="@+id/vedio_buffering_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <!--暂停/播放按钮-->
+    <com.eyes3d.eyes3dplayer.view.VedioPlayAndStopView
+        android:id="@+id/vedio_play_stop_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <!--顶部标题栏布局-->
+    <com.eyes3d.eyes3dplayer.view.EyesVideoTitleLayout
+        android:id="@+id/vedio_title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+    <!--底部操作栏布局-->
+    <com.eyes3d.eyes3dplayer.view.EyesVideoBottomLayout
+        android:id="@+id/vedio_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

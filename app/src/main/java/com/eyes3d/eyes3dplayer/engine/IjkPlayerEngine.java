@@ -1,6 +1,5 @@
-package com.eyes3d.eyes3dplayer;
+package com.eyes3d.eyes3dplayer.engine;
 
-import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 

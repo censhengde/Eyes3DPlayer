@@ -12,18 +12,21 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
+import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
+import com.eyes3d.eyes3dplayer.renderer.Eyes3DRenderer;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Shengde·Cen on 2020/8/14
- * 说明：
+ * 说明：旨在改进接口友好性
  */
 public final class EyesPlayer2 implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
-    private IPlayerEngine mPlayerEngine;
+    private PlayerEngine mPlayerEngine;
     private PlayerController mPlayerController;
     /*采用缓存池减少对IPlayerEngine的创建*/
-    private final ArrayMap<Object, IPlayerEngine> mPlayerEngineMap = new ArrayMap<>();
+    private final ArrayMap<Object, PlayerEngine> mPlayerEngineMap = new ArrayMap<>();
 
 
     private EyesPlayer2() {
@@ -32,7 +35,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
     @Nullable
     private GLSurfaceView mGLSurfaceView;
 
-    public IPlayerEngine getEngine() {
+    public PlayerEngine getEngine() {
         return mPlayerEngine;
     }
 
@@ -42,13 +45,13 @@ public final class EyesPlayer2 implements LifecycleObserver {
     }
 
     /*2D 四参数*/
-    private void create2DEngine(IPlayerEngine engine, LifecycleOwner owner, SurfaceView view, String path) {
+    private void create2DEngine(PlayerEngine engine, LifecycleOwner owner, SurfaceView view, String path) {
         commonInit(engine, owner, path);
         view.getHolder().addCallback(new SurfaceHolderCallbackImpl(mPlayerEngine));
 
     }
 
-    private void commonInit(@Nullable IPlayerEngine engine, LifecycleOwner owner, String path) {
+    private void commonInit(@Nullable PlayerEngine engine, LifecycleOwner owner, String path) {
         owner.getLifecycle().addObserver(this);
         //engine=null就采用默认engine
         if (engine == null) {
@@ -74,7 +77,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
     }
 
     /*3D 五参数*/
-    private void create3DEngine(IPlayerEngine engine, @NotNull LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
+    private void create3DEngine(PlayerEngine engine, @NotNull LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
         commonInit(engine, owner, path);
         mGLSurfaceView = view;
         view.setRenderer(renderer);/*启动GL线程*/
@@ -87,7 +90,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
     }
 
     /*创建2D播放器*/
-    public static PlayerController create2D(@Nullable IPlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
+    public static PlayerController create2D(@Nullable PlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
         EyesPlayer2 player = new EyesPlayer2();
         player.create2DEngine(engine, owner, view, path);
         return player.mPlayerController;
@@ -99,7 +102,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
     }
 
     /*创建3D播放器*/
-    public static PlayerController create3D(@Nullable IPlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
+    public static PlayerController create3D(@Nullable PlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
         EyesPlayer2 player = new EyesPlayer2();
         player.create3DEngine(engine, owner, view, renderer, path);
         return player.mPlayerController;
@@ -144,9 +147,9 @@ public final class EyesPlayer2 implements LifecycleObserver {
     }
 
     private static class PlayerControllerImpl implements PlayerController {
-        private final IPlayerEngine mEngine;
+        private final PlayerEngine mEngine;
 
-        PlayerControllerImpl(IPlayerEngine engine) {
+        PlayerControllerImpl(PlayerEngine engine) {
             this.mEngine = engine;
         }
 
