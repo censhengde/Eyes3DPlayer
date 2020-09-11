@@ -37,7 +37,7 @@ public class VedioBufferingView extends BufferingProgressBar {
 
 
     @Override
-    protected int setContentView() {
+    protected int retRootLayout() {
         return R.layout.buffering_progress_bar_layout;
     }
 

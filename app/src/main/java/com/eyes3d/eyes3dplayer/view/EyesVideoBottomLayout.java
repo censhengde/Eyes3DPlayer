@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
-import com.eyes3d.eyes3dplayer.view.EyesProgressBar;
 
 /**
  * Shengde·Cen on 2020/9/4
@@ -23,10 +22,12 @@ public class EyesVideoBottomLayout extends FloatView {
 
     public EyesVideoBottomLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        mShowAnimation= initTranslateAnimation(0,0,1,0);
+        mDismissAnimation= initTranslateAnimation(0,0,0,1);
     }
 
     @Override
-    protected int setContentView() {
+    protected int retRootLayout() {
         return R.layout.vedio_bottom_layout;
     }
 

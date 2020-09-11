@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btn_vedio_left_layout_lock"
+    android:layout_width="@dimen/dp_25"
+    android:layout_height="@dimen/dp_25"
+    android:backgroundTint="@color/white"
+    android:background="@mipmap/btn_bg_unlock" />

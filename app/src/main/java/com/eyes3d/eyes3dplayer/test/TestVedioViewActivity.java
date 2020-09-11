@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
 import com.eyes3d.eyes3dplayer.view.Eyes2DVideoView;
 
 public class TestVedioViewActivity extends AppCompatActivity {
@@ -17,8 +18,9 @@ public class TestVedioViewActivity extends AppCompatActivity {
 //        getWindow().getDecorView()
         setContentView(R.layout.activity_test_vedio_view);
         mVideoView = findViewById(R.id.eyesVedioView);
-//        mVideoView.addLifecycleOwner(this)
-//                .setDataSource(mPath)
-//                .createPlayer();
+        mVideoView.addLifecycleOwner(this)
+                .setDataSource(mPath)
+                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
+                .createPlayer();
     }
 }

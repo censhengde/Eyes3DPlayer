@@ -21,7 +21,7 @@ public class Eyes3DVedioView extends Eyes2DVideoView {
     private GLSurfaceView mGLSurfaceView;
 
     @Override
-    public int setContentView() {
+    protected int retRootLayout() {
         return 0;
     }
 
@@ -31,7 +31,7 @@ public class Eyes3DVedioView extends Eyes2DVideoView {
 
     @Override
     protected void initView() {
-
+        super.initView();
     }
 
     @Override

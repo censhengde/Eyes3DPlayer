@@ -24,7 +24,7 @@ public class BasePlay2DActivity extends AppCompatActivity {
     protected void initLayout() {
         setContentView(R.layout.activity_play2d);
         SurfaceView sf = findViewById(R.id.sf);
-        mPlayerCtrl = EyesPlayer.create2D(new IjkPlayerEngine(this), this,this, sf, mPath2);/*框架内部已实现LifeCycleObserver，自动处理生命周期相关事宜*/
+        mPlayerCtrl = EyesPlayer.create2D(new IjkPlayerEngine(), this,this, sf, mPath2);/*框架内部已实现LifeCycleObserver，自动处理生命周期相关事宜*/
 
     }
 

@@ -16,11 +16,14 @@ import java.util.Map;
  */
 public interface PlayerEngine extends PlayerController {
     void setDataSource(String path);
-    void setDataSource(String path, Map<String,String> headers);
+
+    void setDataSource(String path, Map<String, String> headers);
+
     void prepareAsync();
+
     void release();
 
-
+    void addStateObserver(Object observer);
 
     void setSurface(Surface surface);
 

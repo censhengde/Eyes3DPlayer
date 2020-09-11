@@ -17,11 +17,6 @@ public class IjkPlayerEngine extends AbstractPlayerEngine {
     private static final String TAG = "IjkPlayerEngine===========>";
     private IjkMediaPlayer mPlayer;
 
-    public IjkPlayerEngine(Object observer) {
-        super(observer);
-    }
-
-
     /*播放器初始化、各种配置*/
     protected void initPlayer() {
         mPlayer = new IjkMediaPlayer();

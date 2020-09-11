@@ -1,26 +1,21 @@
 package com.eyes3d.eyes3dplayer.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.PlayerController;
-import com.eyes3d.eyes3dplayer.PlayerState;
-import com.eyes3d.eyes3dplayer.State;
 
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
@@ -34,20 +29,21 @@ public abstract class BaseVideoView extends RelativeLayout {
     protected Context mContext;
     @Nullable
     protected PlayerEngine mEngine;
-    @NonNls
+    @NonNull
     protected String mPath;
 
 
     private GestureDetector mGestureDetector;
-    protected PlayerController mPlayerController;
+    protected PlayerController mPlayerCtrl;
 
-    public PlayerController getPlayerController() {
-        checkNotNull(mPlayerController, "PlayerController为null,请先调用setDataSource");
-        return mPlayerController;
+    public PlayerController getPlayerCtrl() {
+        checkNotNull(mPlayerCtrl, "PlayerController为null,请先调用setDataSource");
+        return mPlayerCtrl;
     }
 
-    public abstract int setContentView();
+    protected abstract @LayoutRes int retRootLayout();
 
+    @NotNull
     protected LifecycleOwner mLifecycleOwner;
 
     public BaseVideoView(Context context) {
@@ -66,7 +62,7 @@ public abstract class BaseVideoView extends RelativeLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
         mContext = context;
         mGestureDetector = new GestureDetector(context, new SimpleOnGestureListenerImpl(this));
-        View.inflate(context, setContentView(), this);
+        View.inflate(context, retRootLayout(), this);
         initView();
     }
 
@@ -74,7 +70,7 @@ public abstract class BaseVideoView extends RelativeLayout {
 
 
     @SuppressWarnings("unchecked cast")
-    public <T extends BaseVideoView> T addLifecycleOwner(@NotNull LifecycleOwner owner) {
+    public <T extends BaseVideoView> T addLifecycleOwner(@NonNull LifecycleOwner owner) {
         checkNotNull(owner, "LifecycleOwner不允许为null");
         this.mLifecycleOwner = owner;
         return (T) this;
@@ -94,11 +90,18 @@ public abstract class BaseVideoView extends RelativeLayout {
     }
 
     public void createPlayer() {
-        mPlayerController = initPlayer();
+        mPlayerCtrl = initPlayer();
     }
 
     protected abstract PlayerController initPlayer();
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+//        switch (ev.getAction()){
+//            case MotionEvent.ACTION_DOWN: return true;
+//        }
+        return true;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

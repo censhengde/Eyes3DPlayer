@@ -1,5 +1,7 @@
 package com.eyes3d.eyes3dplayer.engine;
 
+import androidx.annotation.NonNull;
+
 import com.eyes3d.eyes3dplayer.utils.PlayerStateApt;
 
 /**
@@ -9,11 +11,16 @@ import com.eyes3d.eyes3dplayer.utils.PlayerStateApt;
 public abstract class AbstractPlayerEngine implements PlayerEngine {
     private static final String TAG = "AbstractPlayerEngine===========>";
     protected PlayerStateApt mApt;
+    private Object mObserver;
 
-    public AbstractPlayerEngine(Object observer) {
+
+    abstract protected void initPlayer();
+
+    @Override
+    public void addStateObserver(@NonNull Object observer) {
+        this.mObserver=observer;
         mApt = new PlayerStateApt(observer);
         mApt.invokeOnStarted();
         initPlayer();
     }
-    abstract protected void initPlayer();
 }

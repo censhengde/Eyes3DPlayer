@@ -24,10 +24,8 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
     private MediaPlayer mPlayer;
     private Context mContext;
 
-   public SystemPlayerEngine(Context context,Object observer) {
-       super(observer);
+   public SystemPlayerEngine(Context context) {
        mContext=context;
-
     }
 
     protected void initPlayer() {

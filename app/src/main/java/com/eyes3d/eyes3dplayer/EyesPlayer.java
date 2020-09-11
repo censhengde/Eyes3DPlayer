@@ -60,15 +60,17 @@ public final class EyesPlayer implements LifecycleObserver {
         //engine=null就采用默认engine
         if (engine == null) {
             if (owner instanceof AppCompatActivity) {
-                engine = new SystemPlayerEngine((AppCompatActivity) owner, observer);
+                engine = new SystemPlayerEngine((AppCompatActivity) owner);
             } else if (owner instanceof Fragment) {
                 Context context = ((Fragment) owner).getContext();
-                engine = new SystemPlayerEngine(context, observer);
+                engine = new SystemPlayerEngine(context);
             } else {
                 throw new RuntimeException("LifecycleOwner必须是AppCompatActivity或Fragment");
             }
         }
+
         mPlayerEngine = engine;
+        mPlayerEngine.addStateObserver(observer);
         mPlayerEngine.setDataSource(path);
         mPlayerEngine.prepareAsync();
         mPlayerController = new PlayerControllerImpl(mPlayerEngine);

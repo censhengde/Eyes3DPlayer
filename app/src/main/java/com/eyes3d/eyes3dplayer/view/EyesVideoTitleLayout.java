@@ -22,10 +22,12 @@ public class EyesVideoTitleLayout extends FloatView {
 
     public EyesVideoTitleLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        mDismissAnimation = initTranslateAnimation(0, 0, 0, -1);
+        mShowAnimation = initTranslateAnimation(0, 0, -1, 0);
     }
 
     @Override
-    protected int setContentView() {
+    protected int retRootLayout() {
         return R.layout.vedio_title_layout;
     }
 
@@ -33,4 +35,6 @@ public class EyesVideoTitleLayout extends FloatView {
     protected void initView() {
         mBtnBack = findViewById(R.id.btn_vedio_title_layout_back);
     }
+
+
 }

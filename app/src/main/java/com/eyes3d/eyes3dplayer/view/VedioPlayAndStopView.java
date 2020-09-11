@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
-import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
 
 /**
  * Shengde·Cen on 2020/9/10
@@ -30,7 +29,7 @@ public class VedioPlayAndStopView extends FloatView {
     }
 
     @Override
-    protected int setContentView() {
+    protected int retRootLayout() {
         return R.layout.play_stop_layout;
     }
 
@@ -65,9 +64,9 @@ public class VedioPlayAndStopView extends FloatView {
     public void show(boolean isPlaying) {
         super.show();
         if (isPlaying) {
-            mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_play);
-        } else {
             mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_stop);
+        } else {
+            mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_play);
         }
     }
 
