@@ -20,7 +20,7 @@ public abstract class AbstractPlayerEngine implements PlayerEngine {
     public void addStateObserver(@NonNull Object observer) {
         this.mObserver=observer;
         mApt = new PlayerStateApt(observer);
-        mApt.invokeOnStarted();
+        mApt.invokeOnCreate();
         initPlayer();
     }
 }

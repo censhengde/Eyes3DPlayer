@@ -32,31 +32,23 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
         mPlayer = new MediaPlayer();
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         //准备完成
-        mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mApt.invokeOnPrepared(SystemPlayerEngine.this);
+        mPlayer.setOnPreparedListener(mp -> mApt.invokeOnPrepared(SystemPlayerEngine.this));
+        /*返回true则处理，false则丢弃*/
+        mPlayer.setOnInfoListener((mp, what, extra) -> {
+            switch (what) {
+                case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                    //开始缓存，暂停播放
+                    mApt.invokeOnBufferingStart(SystemPlayerEngine.this);
+                    break;
+                case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                    //缓存完成，继续播放
+                    mApt.invokeOnBufferingEnd(SystemPlayerEngine.this, mPlayer.getCurrentPosition());
+                    break;
+                default:
+                    break;
             }
-        });
-        mPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-            /*返回true则处理，false则丢弃*/
-            @Override
-            public boolean onInfo(MediaPlayer mp, int what, int extra) {
-                switch (what) {
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                        //开始缓存，暂停播放
-                        mApt.invokeOnBufferingStart(SystemPlayerEngine.this);
-                        break;
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        //缓存完成，继续播放
-                        mApt.invokeOnBufferingEnd(SystemPlayerEngine.this, mPlayer.getCurrentPosition());
-                        break;
-                    default:
-                        break;
-                }
 
-                return true;
-            }
+            return true;
         });
         // 播放完毕
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

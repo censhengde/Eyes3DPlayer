@@ -15,6 +15,8 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.PlayerController;
+import com.eyes3d.eyes3dplayer.listener.OnScreenGestureListener;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +26,7 @@ import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
  * Shengde·Cen on 2020/9/1
  * 说明：
  */
-public abstract class BaseVideoView extends RelativeLayout {
+public abstract class BaseVideoView extends RelativeLayout implements OnScreenGestureListener {
     private static final String TAG = "VideoView===========>";
     protected Context mContext;
     @Nullable
@@ -41,7 +43,8 @@ public abstract class BaseVideoView extends RelativeLayout {
         return mPlayerCtrl;
     }
 
-    protected abstract @LayoutRes int retRootLayout();
+    protected abstract @LayoutRes
+    int retRootLayout();
 
     @NotNull
     protected LifecycleOwner mLifecycleOwner;
@@ -96,26 +99,21 @@ public abstract class BaseVideoView extends RelativeLayout {
     protected abstract PlayerController initPlayer();
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        switch (ev.getAction()){
-//            case MotionEvent.ACTION_DOWN: return true;
-//        }
-        return true;
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
 
     private static class SimpleOnGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
-        private BaseVideoView mVideoView;
+        private static final float MIN_FLING_DISTANCE = 0f;
+        private OnScreenGestureListener mScreenGestureListener;
+        private boolean mOneTimeScroll=false;
 
-        public SimpleOnGestureListenerImpl(BaseVideoView baseVideoView) {
+        public SimpleOnGestureListenerImpl(OnScreenGestureListener listener) {
             super();
-            mVideoView = baseVideoView;
+            mScreenGestureListener = listener;
         }
 
+        //双击时也触发
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.e("=====>", "onSingleTapUp");
@@ -128,22 +126,27 @@ public abstract class BaseVideoView extends RelativeLayout {
 
         }
 
+        /*
+        * distanceX：上次滑动(调用onScroll)到这次滑动的X轴的距离px，不是e1点到e2点的X轴的距离
+        * */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (distanceX >= distanceY) {
-                Log.e("====>", "横向滑动");
-            } else {
-                Log.e("====>", "纵向滑动");
 
+
+            //横向滑动
+            if (Math.abs(e2.getX()-e1.getX() )>= Math.abs(e2.getY()-e1.getY())) {
+                mScreenGestureListener.onHorizontalScroll(e2);
+            }
+            //纵向滑动
+            else {
+                mScreenGestureListener.onVerticalScroll(e2);
             }
             return true;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            Log.e("====>", "onFling");
-            return true;
+            return false;
         }
 
         @Override
@@ -154,6 +157,7 @@ public abstract class BaseVideoView extends RelativeLayout {
         @Override
         public boolean onDown(MotionEvent e) {
             Log.e("====>", "onDown");
+            mOneTimeScroll=true;
             return true;
         }
 
@@ -163,22 +167,21 @@ public abstract class BaseVideoView extends RelativeLayout {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Log.e("====>", "onDoubleTap");
-            if (mVideoView != null) {
-                return mVideoView.onDoubleTap(e);
-            }
-            return false;
+            mScreenGestureListener.onDoubleTap(e);
+            return true;
         }
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
             Log.e("====>", "onDoubleTapEvent");
-            return true;
+            return super.onDoubleTapEvent(e);
         }
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.e("====>", "onSingleTapConfirmed");
-            return mVideoView.onSingleTapConfirmed(e);
+            mScreenGestureListener.onSingleTap(e);
+            return true;
         }
 
         @Override
@@ -188,11 +191,5 @@ public abstract class BaseVideoView extends RelativeLayout {
         }
     }
 
-    protected boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
 
-    public boolean onDoubleTap(MotionEvent e) {
-        return false;
-    }
 }

@@ -2,13 +2,13 @@ package com.eyes3d.eyes3dplayer.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 /**
  * Shengde·Cen on 2020/9/10
@@ -17,7 +17,7 @@ import com.eyes3d.eyes3dplayer.R;
 public class VedioPlayAndStopView extends FloatView {
     private static final String TAG = "PlayAndStopView";
     private Button mBtnPlayStop;
-    private boolean isPlay = false;
+    private boolean mIsPlaying = false;
     private OnClickListener mListener;
 
     public VedioPlayAndStopView(Context context) {
@@ -37,21 +37,18 @@ public class VedioPlayAndStopView extends FloatView {
     @Override
     protected void initView() {
         mBtnPlayStop = findViewById(R.id.btn_play_stop);
-        mBtnPlayStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPlay) {
-                    isPlay = false;
-                    stop();
-                    if (mListener != null) {
-                        mListener.onStop();
-                    }
-                } else {
-                    isPlay = true;
-                    play();
-                    if (mListener != null) {
-                        mListener.onPlay();
-                    }
+        mBtnPlayStop.setOnClickListener(v -> {
+            if (mIsPlaying) {
+                mIsPlaying = false;
+                pause();
+                if (mListener != null) {
+                    mListener.onPause();
+                }
+            } else {
+                mIsPlaying = true;
+                play();
+                if (mListener != null) {
+                    mListener.onPlay();
                 }
             }
         });
@@ -61,54 +58,40 @@ public class VedioPlayAndStopView extends FloatView {
         mListener = listener;
     }
 
-    public void show(boolean isPlaying) {
-        super.show();
-        if (isPlaying) {
-            mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_stop);
-        } else {
-            mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_play);
-        }
-    }
-
 
     public void play() {
-        isPlay = true;
-        if (this.getVisibility() == GONE) {
-            this.setVisibility(VISIBLE);
-        }
+        mIsPlaying = true;
+        super.show();
         mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_play);
 
+
     }
 
-    public void stop() {
-        isPlay = false;
-        if (this.getVisibility() == GONE) {
-            this.setVisibility(VISIBLE);
-        }
+    public void pause() {
+        mIsPlaying = false;
+        super.show();
         mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_stop);
-
     }
 
-    public void onDoubleTap() {
-        if (isPlay) {
-            isPlay = false;
-            stop();
-            if (mListener != null) {
-                mListener.onStop();
-            }
-        } else {
-            isPlay = true;
-            play();
-            if (mListener != null) {
-                mListener.onPlay();
-            }
-        }
-    }
 
     public interface OnClickListener {
         void onPlay();
 
-        void onStop();
+        void onPause();
     }
 
+    /*避免频繁点击造成消息重复*/
+    private int autoDismissMessage = 0;
+
+    public void autoDismiss(int delayMillis) {
+        autoDismissMessage++;
+        postDelayed(() -> {
+                    EyesLog.e(this, "autoDismissMessage=" + autoDismissMessage);
+                    if (autoDismissMessage == 1 && mIsPlaying) {//多次点击只有最后一次能进来
+                        dismiss();
+                    }
+                    autoDismissMessage--;
+                }
+                , delayMillis);
+    }
 }

@@ -16,12 +16,13 @@ import androidx.annotation.Nullable;
  * Shengde·Cen on 2020/9/8
  * 说明：浮动视图抽象
  */
-abstract class FloatView extends FrameLayout {
+public abstract class FloatView extends FrameLayout {
 
 
     protected abstract @LayoutRes
     int retRootLayout();
 
+    private boolean mShowing = false;
 
     /*隐藏动画*/
     protected Animation mDismissAnimation;
@@ -74,6 +75,7 @@ abstract class FloatView extends FrameLayout {
     }
 
     public void show() {
+        mShowing = true;
         if (getVisibility() == VISIBLE) return;
         if (mShowAnimation == null) {
             Log.e("", "mShowAnimation 为null");
@@ -89,7 +91,7 @@ abstract class FloatView extends FrameLayout {
             @Override
             public void onAnimationStart(Animation animation) {
                 FloatView.this.mAnimationCounts++;
-             //FloatView.this.setVisibility(View.VISIBLE);不能把这句放到这里，因为动画是View可见才能执行
+                //FloatView.this.setVisibility(View.VISIBLE);不能把这句放到这里，因为动画是View可见才能执行
             }
 
             @Override
@@ -104,7 +106,12 @@ abstract class FloatView extends FrameLayout {
         });
     }
 
+    public boolean isShowing() {
+        return mShowing;
+    }
+
     public void dismiss() {
+        mShowing = false;
         if (getVisibility() == GONE) return;
         if (mDismissAnimation == null) {
             Log.e("", "mDismissAnimation 为null");

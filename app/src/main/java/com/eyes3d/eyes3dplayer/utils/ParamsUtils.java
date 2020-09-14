@@ -33,4 +33,14 @@ public final class ParamsUtils {
             }
         }
     }
+
+    public static boolean checkParamsNotNull(String msg, Object... args) {
+        for (Object arg : args) {
+            if (arg == null) {
+                Log.e("checkParamsNotNull:", msg);
+                return false;
+            }
+        }
+        return true;
+    }
 }

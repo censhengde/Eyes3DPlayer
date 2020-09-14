@@ -1,7 +1,5 @@
 package com.eyes3d.eyes3dplayer.utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.eyes3d.eyes3dplayer.PlayerController;
@@ -33,7 +31,7 @@ public final class PlayerStateApt {
             if (annoState != null) {
                 State state = annoState.state();
                 switch (state) {
-                    case ON_STARTED:
+                    case ON_CREATE:
                         onStartedM = m;
                         break;
                     case ON_PREPARED:
@@ -64,7 +62,7 @@ public final class PlayerStateApt {
         }
     }
 
-    public void invokeOnStarted() {
+    public void invokeOnCreate() {
         invokeTargetMethod(onStartedM);
     }
 

@@ -18,9 +18,21 @@ public class TestVedioViewActivity extends AppCompatActivity {
 //        getWindow().getDecorView()
         setContentView(R.layout.activity_test_vedio_view);
         mVideoView = findViewById(R.id.eyesVedioView);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
         mVideoView.addLifecycleOwner(this)
                 .setDataSource(mPath)
-                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
+//                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
                 .createPlayer();
     }
 }

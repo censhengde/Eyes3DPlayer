@@ -18,6 +18,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.engine.SystemPlayerEngine;
 import com.eyes3d.eyes3dplayer.renderer.Eyes3DRenderer;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,13 +77,7 @@ public final class EyesPlayer implements LifecycleObserver {
         mPlayerController = new PlayerControllerImpl(mPlayerEngine);
     }
 
-    public void addLifecycleOwner(LifecycleOwner owner) {
-        owner.getLifecycle().addObserver(this);
-    }
 
-    public void addPlayerStateObserver(Object observer) {
-
-    }
 
     /*3D 四参数*/
     private void create3DEngine(@NotNull LifecycleOwner owner, Object observer, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
@@ -139,6 +134,7 @@ public final class EyesPlayer implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onDestroy() {
+        EyesLog.e(this,"onDestroy");
         this.release();
     }
 

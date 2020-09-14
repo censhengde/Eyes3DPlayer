@@ -12,15 +12,18 @@ import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.State;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
 
 /**
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class Eyes2DVideoView extends BaseVideoView {
+public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopView.OnClickListener {
 
     private static final String TAG = "Eyes2DVideoView";
+    public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
+
     private SurfaceView mSurfaceView;
     /*音量条*/
     protected EyesVolumeBar mVolumeBar;
@@ -61,20 +64,25 @@ public class Eyes2DVideoView extends BaseVideoView {
         mBottomLayout = findViewById(R.id.vedio_bottom_layout);
         mLeftLayout = findViewById(R.id.vedio_left_layout);
         mRightLayout = findViewById(R.id.vedio_right_layout);
+
+        mPlayAndStopView.setOnClickListener(this);
     }
 
     /*开始创建播放器*/
-    @PlayerState(state = State.ON_STARTED)
-    public void onPlayerStartCreate() {
-        mBufferingView.show();
+    @PlayerState(state = State.ON_CREATE)
+    public void onPlayerCreate() {
+        Log.e(TAG, "开始创建播放器");
+        mBufferingView.show();//这里在Activity onResume之前调用，显示不了
     }
 
     /*准备完毕·*/
     @PlayerState(state = State.ON_PREPARED)
     public void onPrepared(PlayerController playerCtrl) {
-        Log.e(TAG, "播放准备完毕");
+        Log.e(TAG, "准备完毕");
         playerCtrl.start();
-        mBufferingView.dismiss();
+        if (mBufferingView.isShowing()){
+            mBufferingView.dismiss();
+        }
     }
 
 
@@ -82,13 +90,16 @@ public class Eyes2DVideoView extends BaseVideoView {
     @PlayerState(state = State.ON_BUFFERING_START)
     public void onBufferingStart(PlayerController playerCtrl) {
         Log.e(TAG, "缓冲开始");
+        if (!mBufferingView.isShowing()){
+            mBufferingView.show();
+        }
     }
 
     /*缓冲结束*/
     @PlayerState(state = State.ON_BUFFERING_END)
     public void onBufferingEnd(PlayerController playerCtrl, long currPosition) {
         Log.e(TAG, "缓冲结束: currPosition=" + currPosition);
-
+        mBufferingView.dismiss();
     }
 
 
@@ -96,7 +107,7 @@ public class Eyes2DVideoView extends BaseVideoView {
     @PlayerState(state = State.ON_COMPLETION)
     public void onCompletion(PlayerController playerCtrl) {
         Log.e(TAG, "播放完成");
-        mPlayAndStopView.stop();
+        mPlayAndStopView.pause();
     }
 
     /*出现错误*/
@@ -107,40 +118,52 @@ public class Eyes2DVideoView extends BaseVideoView {
 
     @Override
     protected PlayerController initPlayer() {
-        ParamsUtils.checkNotNull(mLifecycleOwner, "mLifecycleOwner 为 null");
-        ParamsUtils.checkNotNull(mPath, "mPath 为 null");
+        ParamsUtils.checkNotNull(mLifecycleOwner, "mLifecycleOwner 不允许为 null");
+        ParamsUtils.checkNotNull(mPath, "mPath 不允许为 null");
         return EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
     }
 
-    /*双击屏幕*/
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        if (mPlayerCtrl == null) return false;
-        if (mPlayerCtrl.isPlaying()) {
-            mPlayerCtrl.pause();
-        } else {
-            mPlayerCtrl.start();
-        }
-        mPlayAndStopView.onDoubleTap();
-        return true;
-    }
-
-    private boolean isFloatViewShowing = false;
-
     /*单击屏幕*/
     @Override
-    protected boolean onSingleTapConfirmed(MotionEvent e) {
+    public void onSingleTap(MotionEvent e) {
         if (isFloatViewShowing) {
             isFloatViewShowing = false;
             dismissFloatView();
         } else {
-            isFloatViewShowing=true;
+            isFloatViewShowing = true;
             showFloatView(mPlayerCtrl.isPlaying());
 
         }
-
-        return true;
     }
+
+    /*双击屏幕*/
+    @Override
+    public void onDoubleTap(MotionEvent e) {
+        if (mPlayerCtrl == null) return;
+        if (mPlayerCtrl.isPlaying()) {
+            mPlayerCtrl.pause();
+            mPlayAndStopView.pause();
+        } else {
+            mPlayerCtrl.start();
+            mPlayAndStopView.play();
+            mPlayAndStopView.autoDismiss(AUTO_DISMISS_TIME_MILLIS);
+        }
+    }
+
+    @Override
+    public void onHorizontalScroll(MotionEvent e) {
+        EyesLog.e(this,"水平方向滑动");
+    }
+
+    @Override
+    public void onVerticalScroll(MotionEvent e) {
+        EyesLog.e(this,"垂直方向滑动");
+
+    }
+
+
+    private boolean isFloatViewShowing = false;
+
 
     protected void showFloatView(boolean autoDismiss) {
         mTitleLayout.show();
@@ -149,12 +172,7 @@ public class Eyes2DVideoView extends BaseVideoView {
         mRightLayout.show();
 
         if (autoDismiss) {
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dismissFloatView();
-                }
-            }, 5000);
+            postDelayed(this::dismissFloatView, AUTO_DISMISS_TIME_MILLIS);
         }
     }
 
@@ -163,5 +181,21 @@ public class Eyes2DVideoView extends BaseVideoView {
         mBottomLayout.dismiss();
         mLeftLayout.dismiss();
         mRightLayout.dismiss();
+    }
+
+    @Override
+    public void onPlay() {
+        if (mPlayerCtrl != null && !mPlayerCtrl.isPlaying()) {
+            mPlayerCtrl.start();
+            mPlayAndStopView.autoDismiss(AUTO_DISMISS_TIME_MILLIS);
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        if (mPlayerCtrl != null && mPlayerCtrl.isPlaying()) {
+            mPlayerCtrl.pause();
+        }
     }
 }

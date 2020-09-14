@@ -14,38 +14,25 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * 说明：
  */
 public class IjkPlayerEngine extends AbstractPlayerEngine {
-    private static final String TAG = "IjkPlayerEngine===========>";
+    private static final String TAG = "IjkPlayerEngine=======>";
     private IjkMediaPlayer mPlayer;
 
     /*播放器初始化、各种配置*/
     protected void initPlayer() {
         mPlayer = new IjkMediaPlayer();
-        mPlayer.setOnPreparedListener(new IjkMediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(IMediaPlayer iMediaPlayer) {
-                mApt.invokeOnPrepared(IjkPlayerEngine.this);
-            }
-        });
-        mPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(IMediaPlayer iMediaPlayer) {
-                mApt.invokeOnCompletion(IjkPlayerEngine.this);
-            }
-        });
+        mPlayer.setOnPreparedListener(iMediaPlayer -> mApt.invokeOnPrepared(IjkPlayerEngine.this));
+        mPlayer.setOnCompletionListener(iMediaPlayer -> mApt.invokeOnCompletion(IjkPlayerEngine.this));
 
-        mPlayer.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
-                switch (i) {
-                    case IjkMediaPlayer.MEDIA_INFO_BUFFERING_START:
-                        mApt.invokeOnBufferingStart(IjkPlayerEngine.this);
-                        break;
-                    case IjkMediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        mApt.invokeOnBufferingEnd(IjkPlayerEngine.this, iMediaPlayer.getCurrentPosition());
-                        break;
-                }
-                return true;
+        mPlayer.setOnInfoListener((iMediaPlayer, i, i1) -> {
+            switch (i) {
+                case IjkMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                    mApt.invokeOnBufferingStart(IjkPlayerEngine.this);
+                    break;
+                case IjkMediaPlayer.MEDIA_INFO_BUFFERING_END:
+                    mApt.invokeOnBufferingEnd(IjkPlayerEngine.this, iMediaPlayer.getCurrentPosition());
+                    break;
             }
+            return true;
         });
 
 
