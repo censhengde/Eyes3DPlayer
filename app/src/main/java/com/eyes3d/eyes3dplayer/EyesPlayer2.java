@@ -23,180 +23,51 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class EyesPlayer2 implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
-    private PlayerEngine mPlayerEngine;
-    private PlayerController mPlayerController;
-    /*采用缓存池减少对IPlayerEngine的创建*/
-    private final ArrayMap<Object, PlayerEngine> mPlayerEngineMap = new ArrayMap<>();
 
-
-    private EyesPlayer2() {
+    public static _2DBuilder create2D(){
+        return new _2DBuilder();
     }
 
-    @Nullable
-    private GLSurfaceView mGLSurfaceView;
+    private static class Builder {
 
-    public PlayerEngine getEngine() {
-        return mPlayerEngine;
-    }
+        private String mPath;
+        private LifecycleOwner mOwner;
+        private Object mStateObserver;
+        private PlayerEngine mEngine;
 
-    /*2D 三参数*/
-    private void create2DEngine(LifecycleOwner owner, SurfaceView view, String path) {
-        create2DEngine(null, owner, view, path);
-    }
-
-    /*2D 四参数*/
-    private void create2DEngine(PlayerEngine engine, LifecycleOwner owner, SurfaceView view, String path) {
-        commonInit(engine, owner, path);
-        view.getHolder().addCallback(new SurfaceHolderCallbackImpl(mPlayerEngine));
-
-    }
-
-    private void commonInit(@Nullable PlayerEngine engine, LifecycleOwner owner, String path) {
-        owner.getLifecycle().addObserver(this);
-        //engine=null就采用默认engine
-        if (engine == null) {
-//            engine = new SystemPlayerEngine(owner);
+        public <T extends Builder> T setPath(String path) {
+            mPath = path;
+            return (T) this;
         }
-        mPlayerEngine = engine;
-        mPlayerEngine.setDataSource(path);
-        mPlayerEngine.prepareAsync();
-        mPlayerController = new PlayerControllerImpl(mPlayerEngine);
+
+        public <T extends Builder> T setOwner(LifecycleOwner owner) {
+            mOwner = owner;
+            return (T) this;
+        }
+
+        public void setStateObserver(Object stateObserver) {
+            mStateObserver = stateObserver;
+        }
+
+        public void setEngine(PlayerEngine engine) {
+            mEngine = engine;
+        }
+
+        public PlayerController create(){
+            return this.mEngine;
+        }
     }
 
-    public void addLifecycleOwner(LifecycleOwner owner) {
-        owner.getLifecycle().addObserver(this);
-    }
-
-    public void addPlayerStateObserver(Object observer) {
-
-    }
-
-    /*3D 四参数*/
-    private void create3DEngine(@NotNull LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
-        this.create3DEngine(null, owner, view, renderer, path);
-    }
-
-    /*3D 五参数*/
-    private void create3DEngine(PlayerEngine engine, @NotNull LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
-        commonInit(engine, owner, path);
-        mGLSurfaceView = view;
-        view.setRenderer(renderer);/*启动GL线程*/
-        mPlayerEngine.setSurface(renderer.getSurface());
-    }
-
-    /*创建2D播放器*/
-    public static PlayerController create2D(@NotNull LifecycleOwner owner, SurfaceView view, String path) {
-        return create2D(null, owner, view, path);
-    }
-
-    /*创建2D播放器*/
-    public static PlayerController create2D(@Nullable PlayerEngine engine, @NonNull LifecycleOwner owner, SurfaceView view, String path) {
-        EyesPlayer2 player = new EyesPlayer2();
-        player.create2DEngine(engine, owner, view, path);
-        return player.mPlayerController;
-    }
-
-    /*创建3D播放器*/
-    public static PlayerController create3D(@NotNull LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
-        return create3D(null, owner, view, renderer, path);
-    }
-
-    /*创建3D播放器*/
-    public static PlayerController create3D(@Nullable PlayerEngine engine, LifecycleOwner owner, GLSurfaceView view, Eyes3DRenderer renderer, String path) {
-        EyesPlayer2 player = new EyesPlayer2();
-        player.create3DEngine(engine, owner, view, renderer, path);
-        return player.mPlayerController;
-    }
-
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private void onResume() {
-        Log.e(TAG, "onResume");
-        if (mGLSurfaceView != null) {
-            mGLSurfaceView.onResume();
+    private static class _2DBuilder extends Builder {
+        private SurfaceView mSurfaceView;
+        public void setSurfaceView(SurfaceView sf){
+            mSurfaceView=sf;
         }
 
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    private void onPause() {
-        Log.e(TAG, "onPause执行");
-        this.pause();
+    private static class _3DBuilder{
+        private GLSurfaceView mGLSurfaceView;
+
     }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private void onDestroy() {
-        this.release();
-    }
-
-    public void pause() {
-        if (mGLSurfaceView != null) {
-            mGLSurfaceView.onPause();
-        }
-        mPlayerEngine.pause();
-    }
-
-    public void release() {
-        if (mPlayerEngine != null) {
-            mPlayerEngine.reset();
-            mPlayerEngine.release();
-            mPlayerEngine = null;
-        }
-        mGLSurfaceView = null;
-        mPlayerController = null;
-    }
-
-    private static class PlayerControllerImpl implements PlayerController {
-        private final PlayerEngine mEngine;
-
-        PlayerControllerImpl(PlayerEngine engine) {
-            this.mEngine = engine;
-        }
-
-        @Override
-        public void start() {
-            mEngine.start();
-        }
-
-        @Override
-        public void pause() {
-            mEngine.pause();
-        }
-
-        @Override
-        public void stop() {
-            mEngine.stop();
-        }
-
-        @Override
-        public void reset() {
-            mEngine.reset();
-        }
-
-        @Override
-        public long getCurrentPosition() {
-            return mEngine.getCurrentPosition();
-        }
-
-        @Override
-        public long getDuration() {
-            return mEngine.getDuration();
-        }
-
-        @Override
-        public void seekTo(int msec) {
-            mEngine.seekTo(msec);
-        }
-        @Override
-        public boolean isPlaying() {
-            return mEngine.isPlaying();
-        }
-    }
-private static class _2DBuilder{
-        SurfaceView mSurfaceView;
-        public _2DBuilder setSurfaceView(SurfaceView sf){
-            this.mSurfaceView=sf;
-            return this;
-        }
-}
 }

@@ -23,7 +23,7 @@ public interface PlayerEngine extends PlayerController {
 
     void release();
 
-    void addStateObserver(Object observer);
+
 
     void setSurface(Surface surface);
 

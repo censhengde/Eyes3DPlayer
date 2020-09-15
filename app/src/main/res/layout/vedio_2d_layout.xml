@@ -17,7 +17,7 @@
         android:visibility="gone" />
 
     <!--暂停/播放按钮-->
-    <com.eyes3d.eyes3dplayer.view.VedioPlayAndStopView
+    <com.eyes3d.eyes3dplayer.view.VideoPlayAndPauseButton
         android:id="@+id/vedio_play_stop_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

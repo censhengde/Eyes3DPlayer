@@ -9,22 +9,23 @@ import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
+import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
 
 /**
  * Shengde·Cen on 2020/9/10
  * 说明：
  */
-public class VedioPlayAndStopView extends FloatView {
+public class VideoPlayAndPauseButton extends FloatView {
     private static final String TAG = "PlayAndStopView";
     private Button mBtnPlayStop;
     private boolean mIsPlaying = false;
-    private OnClickListener mListener;
+    private OnPlayAndPauseListener mListener;
 
-    public VedioPlayAndStopView(Context context) {
+    public VideoPlayAndPauseButton(Context context) {
         super(context);
     }
 
-    public VedioPlayAndStopView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public VideoPlayAndPauseButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -54,7 +55,8 @@ public class VedioPlayAndStopView extends FloatView {
         });
     }
 
-    public void setOnClickListener(OnClickListener listener) {
+    public void setOnPlayAndPauseListener(OnPlayAndPauseListener listener) {
+        ParamsUtils.checkNotNull(listener,"OnPlayAndPauseListener 为null");
         mListener = listener;
     }
 
@@ -74,7 +76,7 @@ public class VedioPlayAndStopView extends FloatView {
     }
 
 
-    public interface OnClickListener {
+    public interface OnPlayAndPauseListener {
         void onPlay();
 
         void onPause();

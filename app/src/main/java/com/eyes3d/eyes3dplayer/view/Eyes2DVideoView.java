@@ -19,7 +19,7 @@ import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopView.OnClickListener {
+public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseButton.OnPlayAndPauseListener {
 
     private static final String TAG = "Eyes2DVideoView";
     public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
@@ -36,7 +36,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopVi
     /*缓冲进度条*/
     private BufferingProgressBar mBufferingView;
     /*暂停/播放按钮*/
-    private VedioPlayAndStopView mPlayAndStopView;
+    private VideoPlayAndPauseButton mPlayAndStopView;
     /*左边布局栏*/
     private EyesVedioLeftLayout mLeftLayout;
     /*右边布局栏*/
@@ -65,7 +65,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopVi
         mLeftLayout = findViewById(R.id.vedio_left_layout);
         mRightLayout = findViewById(R.id.vedio_right_layout);
 
-        mPlayAndStopView.setOnClickListener(this);
+        mPlayAndStopView.setOnPlayAndPauseListener(this);
     }
 
     /*开始创建播放器*/
@@ -125,7 +125,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopVi
 
     /*单击屏幕*/
     @Override
-    public void onSingleTap(MotionEvent e) {
+    public void onSingleTapConfirmed(MotionEvent e) {
         if (isFloatViewShowing) {
             isFloatViewShowing = false;
             dismissFloatView();
@@ -156,8 +156,20 @@ public class Eyes2DVideoView extends BaseVideoView implements VedioPlayAndStopVi
     }
 
     @Override
+    public void onHorizontalScrollUp(MotionEvent e) {
+        EyesLog.e(this,"水平方向滑动Up");
+
+    }
+
+    @Override
     public void onVerticalScroll(MotionEvent e) {
         EyesLog.e(this,"垂直方向滑动");
+
+    }
+
+    @Override
+    public void onVerticalScrollUp(MotionEvent e) {
+        EyesLog.e(this,"垂直方向滑动Up");
 
     }
 

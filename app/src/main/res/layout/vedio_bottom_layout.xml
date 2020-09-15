@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
     <SeekBar
-        android:id="@+id/seekbar_vedio_bottom_layout_progress_bar"
+        android:id="@+id/seekbar_video_bottom_layout_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -13,14 +13,14 @@
         android:minHeight="@dimen/dp_3"
         android:progressDrawable="@drawable/seekbarbg"
         android:thumb="@drawable/seekbarthum110" />
-    <Button
-        android:id="@+id/btn_vedio_bottom_layout_play_pause"
+    <com.eyes3d.eyes3dplayer.view.VideoPlayAndPauseButton
+        android:id="@+id/btn_video_bottom_layout_play_pause"
         android:layout_width="@dimen/dp_35"
         android:layout_height="@dimen/dp_35"
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_12"
         android:layout_marginBottom="@dimen/dp_20"
-        android:layout_below="@id/seekbar_vedio_bottom_layout_progress_bar"
+        android:layout_below="@id/seekbar_video_bottom_layout_progress_bar"
         android:background="@mipmap/btn_bg_stop"
         />
 </RelativeLayout>

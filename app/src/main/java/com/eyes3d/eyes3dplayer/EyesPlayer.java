@@ -30,8 +30,6 @@ public final class EyesPlayer implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
     private PlayerEngine mPlayerEngine;
     private PlayerController mPlayerController;
-    /*采用缓存池减少对IPlayerEngine的创建*/
-    private final ArrayMap<Object, PlayerEngine> mPlayerEngineMap = new ArrayMap<>();
 
 
     private EyesPlayer() {

@@ -8,12 +8,14 @@ import android.view.MotionEvent;
  */
 public interface OnScreenGestureListener {
     //单击
-    void onSingleTap(MotionEvent e);
+    void onSingleTapConfirmed(MotionEvent e);
     //双击
     void onDoubleTap(MotionEvent e);
 
     void onHorizontalScroll(MotionEvent e);
+    void onHorizontalScrollUp(MotionEvent e);
     void onVerticalScroll(MotionEvent e);
+    void onVerticalScrollUp(MotionEvent e);
 //    //左滑
 //    void onLeftFling(MotionEvent e);
 //    //右滑

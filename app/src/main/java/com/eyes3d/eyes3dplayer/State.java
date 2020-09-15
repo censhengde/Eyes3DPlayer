@@ -7,6 +7,9 @@ package com.eyes3d.eyes3dplayer;
 public enum State {
     ON_CREATE,
     ON_PREPARED,/*准备完成*/
+    ON_START,
+    ON_PAUSE,
+    ON_STOP,
     ON_COMPLETION,/*播放完毕*/
     ON_BUFFERING_START,/*开始缓冲*/
     ON_BUFFERING_END,/*缓冲结束*/

@@ -22,4 +22,11 @@ public class Play3DActivity extends BasePlay2DActivity {
         super.onBufferingEnd(playerCtrl, currPosition);
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+
 }

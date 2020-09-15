@@ -1,6 +1,9 @@
 package com.eyes3d.eyes3dplayer.utils;
 
+import android.util.SparseArray;
+
 import androidx.annotation.NonNull;
+import androidx.collection.SimpleArrayMap;
 
 import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.PlayerState;
@@ -9,6 +12,8 @@ import com.eyes3d.eyes3dplayer.State;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Shengde·Cen on 2020/8/14
@@ -17,14 +22,20 @@ import java.lang.reflect.Method;
 public final class PlayerStateApt {
     private static final String TAG = "PlayerStateApt===>";
     @NonNull
-    private final WeakReference<Object> oWnerRef;
+    private  WeakReference<Object> mOWnerRef;
+    private final List<Object> mObservers=new ArrayList<>();
+    private final SimpleArrayMap<Object,List<Method>> mTargetMethods=new SimpleArrayMap<>();
 
-    private Method onStartedM, onCompletionM, onBufferingStartM,
-            onBufferingEndM, onPreparedM, onVideoSizeChangedM, onBufferingUpdateM, onErrorM;
+    private Method mOnCreateM, mOnCompletionM, mOnBufferingStartM,
+            mOnBufferingEndM, mOnPreparedM, mOnVideoSizeChangedM,
+            mOnBufferingUpdateM, mOnErrorM, mOnStartM, mOnPauseM, mOnStopM;
 
-    public PlayerStateApt(Object observer) {
-        this.oWnerRef = new WeakReference<>(observer);
-        Class<?> clz = oWnerRef.get().getClass();
+
+    public void  addObserver(Object observer) {
+        if (observer==null) return;
+        mObservers.add(observer);
+        this.mOWnerRef = new WeakReference<>(observer);
+        Class<?> clz = mOWnerRef.get().getClass();
         Method[] methods = clz.getMethods();//要求注解方法必须是pubic
         for (Method m : methods) {
             PlayerState annoState = m.getAnnotation(PlayerState.class);
@@ -32,28 +43,37 @@ public final class PlayerStateApt {
                 State state = annoState.state();
                 switch (state) {
                     case ON_CREATE:
-                        onStartedM = m;
+                        mOnCreateM = m;
                         break;
                     case ON_PREPARED:
-                        onPreparedM = m;
+                        mOnPreparedM = m;
+                        break;
+                    case ON_START:
+                        mOnStartM = m;
+                        break;
+                    case ON_PAUSE:
+                        mOnPauseM = m;
+                        break;
+                    case ON_STOP:
+                        mOnStopM = m;
                         break;
                     case ON_COMPLETION:
-                        onCompletionM = m;
+                        mOnCompletionM = m;
                         break;
                     case ON_BUFFERING_START:
-                        onBufferingStartM = m;
+                        mOnBufferingStartM = m;
                         break;
                     case ON_BUFFERING_END:
-                        onBufferingEndM = m;
+                        mOnBufferingEndM = m;
                         break;
                     case ON_BUFFERING_UPDATE:
-                        onBufferingUpdateM = m;
+                        mOnBufferingUpdateM = m;
                         break;
                     case ON_VIDEO_SIZE_CHANGED:
-                        onVideoSizeChangedM = m;
+                        mOnVideoSizeChangedM = m;
                         break;
                     case ON_ERROR:
-                        onErrorM = m;
+                        mOnErrorM = m;
                         break;
                     default:
                         break;
@@ -63,19 +83,19 @@ public final class PlayerStateApt {
     }
 
     public void invokeOnCreate() {
-        invokeTargetMethod(onStartedM);
+        invokeTargetMethod(mOnCreateM);
     }
 
     public void invokeOnCompletion(PlayerController playerController) {
-        invokeTargetMethod(onCompletionM, playerController);
+        invokeTargetMethod(mOnCompletionM, playerController);
     }
 
     public void invokeOnBufferingStart(PlayerController playerController) {
-        invokeTargetMethod(onBufferingStartM, playerController);
+        invokeTargetMethod(mOnBufferingStartM, playerController);
     }
 
     public void invokeOnBufferingEnd(PlayerController playerController, long currentPosition) {
-        invokeTargetMethod(onBufferingEndM, playerController, currentPosition);
+        invokeTargetMethod(mOnBufferingEndM, playerController, currentPosition);
     }
 
     private void invokeTargetMethod(Method target, Object... args) {
@@ -84,7 +104,7 @@ public final class PlayerStateApt {
                 target.setAccessible(true);
             }
             try {
-                target.invoke(oWnerRef.get(), args);
+                target.invoke(mOWnerRef.get(), args);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 throw new RuntimeException(TAG + "异常");
@@ -93,20 +113,31 @@ public final class PlayerStateApt {
     }
 
     public void invokeOnPrepared(PlayerController playerController) {
-        invokeTargetMethod(onPreparedM, playerController);
+        invokeTargetMethod(mOnPreparedM, playerController);
     }
 
     public void invokeOnBufferingUpdata(PlayerController playerCtrl) {
-        invokeTargetMethod(onBufferingUpdateM, playerCtrl);
+        invokeTargetMethod(mOnBufferingUpdateM, playerCtrl);
     }
 
     public void invokeOnVideoSizeChanged(PlayerController playerCtrl, int width, int height) {
-        invokeTargetMethod(onVideoSizeChangedM, playerCtrl, width, height);
+        invokeTargetMethod(mOnVideoSizeChangedM, playerCtrl, width, height);
     }
 
     public void invokeOnError(PlayerController playerController, int err) {
-        invokeTargetMethod(onErrorM, playerController, err);
+        invokeTargetMethod(mOnErrorM, playerController, err);
     }
 
+    public void invokeOnStart() {
+        invokeTargetMethod(mOnStartM);
+    }
+
+    public void invokeOnPause() {
+        invokeTargetMethod(mOnPauseM);
+    }
+
+    public void invokeOnStop() {
+        invokeTargetMethod(mOnStopM);
+    }
 
 }
