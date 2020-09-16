@@ -41,15 +41,15 @@ public class VideoPlayAndPauseButton extends FloatView {
         mBtnPlayStop.setOnClickListener(v -> {
             if (mIsPlaying) {
                 mIsPlaying = false;
-                pause();
+//                pause();
                 if (mListener != null) {
-                    mListener.onPause();
+                    mListener.onClickPause();
                 }
             } else {
                 mIsPlaying = true;
-                play();
+//                play();
                 if (mListener != null) {
-                    mListener.onPlay();
+                    mListener.onClickPlay();
                 }
             }
         });
@@ -77,9 +77,9 @@ public class VideoPlayAndPauseButton extends FloatView {
 
 
     public interface OnPlayAndPauseListener {
-        void onPlay();
+        void onClickPlay();
 
-        void onPause();
+        void onClickPause();
     }
 
     /*避免频繁点击造成消息重复*/

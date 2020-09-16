@@ -13,7 +13,7 @@
         android:minHeight="@dimen/dp_3"
         android:progressDrawable="@drawable/seekbarbg"
         android:thumb="@drawable/seekbarthum110" />
-    <com.eyes3d.eyes3dplayer.view.VideoPlayAndPauseButton
+    <Button
         android:id="@+id/btn_video_bottom_layout_play_pause"
         android:layout_width="@dimen/dp_35"
         android:layout_height="@dimen/dp_35"

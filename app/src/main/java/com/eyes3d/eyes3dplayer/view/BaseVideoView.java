@@ -1,6 +1,8 @@
 package com.eyes3d.eyes3dplayer.view;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -97,8 +99,37 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
 
     protected abstract PlayerController initPlayer();
 
+    private float mDownX;
+    private float mDownY;
+    private boolean mHorizontalScrolled = false;
+    private boolean mVerticalScrolled = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mDownX = event.getX();
+                mDownY = event.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float distX = Math.abs(event.getX() - mDownX);
+                float distY = Math.abs(event.getY() - mDownY);
+                /*水平滑动*/
+                if (distX >= distY || mHorizontalScrolled) {
+                    mHorizontalScrolled = true;
+                    this.onHorizontalScroll(event);
+                    return true;
+                } else if (distX < distY || mVerticalScrolled) {/*垂直滑动*/
+                    mVerticalScrolled = true;
+                    this.onVerticalScroll(event);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                mHorizontalScrolled = false;
+                mVerticalScrolled = false;
+                break;
+        }
+
         return mGestureDetector.onTouchEvent(event);
     }
 
@@ -106,10 +137,13 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         private static final float MIN_FLING_DISTANCE = 0f;
         private OnScreenGestureListener mScreenGestureListener;
         private boolean mOneTimeScroll = false;
+        private final Handler mHandler;
+        private int mMsgs = 0;
 
         public SimpleOnGestureListenerImpl(OnScreenGestureListener listener) {
             super();
             mScreenGestureListener = listener;
+            mHandler = new Handler(Looper.getMainLooper());
         }
 
         //双击时也触发
@@ -130,26 +164,36 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
          * */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-           //这里的action只有move
-            switch (e2.getAction()) {
-                case MotionEvent.ACTION_MOVE: //横向滑动
-                    if (Math.abs(e2.getX() - e1.getX()) >= Math.abs(e2.getY() - e1.getY())) {
-                        mScreenGestureListener.onHorizontalScroll(e2);
+            //这里的action只有move
+            if (Math.abs(e2.getX() - e1.getX()) >= Math.abs(e2.getY() - e1.getY())) {
+                mMsgs++;
+                mHandler.postDelayed(() -> {
+                    if (mMsgs == 1) {
+                        mScreenGestureListener.onHorizontalScrollUp(e2);
                     }
-                    //纵向滑动
-                    else {
-                        mScreenGestureListener.onVerticalScroll(e2);
+                    mMsgs--;
+                }, 500);
+                mScreenGestureListener.onHorizontalScroll(e2);
+            }
+            //纵向滑动
+            else {
+                mMsgs++;
+                mHandler.postDelayed(() -> {
+                    if (mMsgs == 1) {
+                        mScreenGestureListener.onVerticalScrollUp(e2);
                     }
-                    break;
-                case MotionEvent.ACTION_UP:mScreenGestureListener.onHorizontalScrollUp(e2);
-                    break;
+                    mMsgs--;
+                }, 500);
+                mScreenGestureListener.onVerticalScroll(e2);
             }
 
-            return true;
+            return false;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//            if (e2.getAction()==MotionEvent.ACTION_UP)
+
             return false;
         }
 
@@ -164,7 +208,6 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
             mOneTimeScroll = true;
             return true;
         }
-
 
 
         /*双击屏幕 */

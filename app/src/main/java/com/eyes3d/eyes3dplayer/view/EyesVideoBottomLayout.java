@@ -9,7 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.PlayerController;
+import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.State;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 /**
  * Shengde·Cen on 2020/9/4
@@ -19,8 +22,15 @@ public class EyesVideoBottomLayout extends FloatView {
     /*播放进度条*/
     private SeekBar mProgressBar;
     /*播放暂停*/
-    private VideoPlayAndPauseButton mBtnPlayAndPause;
-    private PlayerController mPlayerController;
+    private Button mBtnPlayAndPause;
+    PlayerController mPlayerController;
+    private boolean mPlaying = false;
+
+    private VideoPlayAndPauseButton.OnPlayAndPauseListener mOnPlayAndPauseListener;
+
+    public void setOnPlayAndPauseListener(VideoPlayAndPauseButton.OnPlayAndPauseListener listener) {
+        mOnPlayAndPauseListener = listener;
+    }
 
     public EyesVideoBottomLayout(Context context) {
         super(context);
@@ -32,6 +42,7 @@ public class EyesVideoBottomLayout extends FloatView {
         mDismissAnimation = initTranslateAnimation(0, 0, 0, 1);
     }
 
+
     @Override
     protected int retRootLayout() {
         return R.layout.vedio_bottom_layout;
@@ -41,12 +52,25 @@ public class EyesVideoBottomLayout extends FloatView {
     protected void initView() {
         mBtnPlayAndPause = findViewById(R.id.btn_video_bottom_layout_play_pause);
         mProgressBar = findViewById(R.id.seekbar_video_bottom_layout_progress_bar);
-//        mProgressBar.setOnSeekBarChangeListener();
-        mPlayerController.addStateObserver(this);
-
+        mBtnPlayAndPause.setOnClickListener((v) -> {
+            if (mOnPlayAndPauseListener == null) return;
+            if (!mPlaying) {
+                mPlaying = true;
+                mOnPlayAndPauseListener.onClickPlay();
+            } else {
+                mPlaying = false;
+                mOnPlayAndPauseListener.onClickPause();
+            }
+        });
     }
 
-    public void setOnPlayAndPauseListener(VideoPlayAndPauseButton.OnPlayAndPauseListener listener) {
-        mBtnPlayAndPause.setOnPlayAndPauseListener(listener);
+    @PlayerState(state = State.ON_START)
+    public void onStartPlay() {
+        EyesLog.e(this, "开始播放111");
+        mBtnPlayAndPause.setBackgroundResource(R.mipmap.btn_bg_play);
+    }
+
+    void onPlayPause() {
+        mBtnPlayAndPause.setBackgroundResource(R.mipmap.btn_bg_stop);
     }
 }

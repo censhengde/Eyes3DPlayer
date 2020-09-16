@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.listener.OnClickVedioLeftLayoutListener;
 
 /**
  * Shengde·Cen on 2020/9/11
@@ -15,6 +16,12 @@ import com.eyes3d.eyes3dplayer.R;
  */
 public class EyesVedioLeftLayout extends FloatView {
     private Button mBtnLock;
+    private boolean mLocked = false;
+    private OnClickVedioLeftLayoutListener mListener;
+
+    public void setListener(OnClickVedioLeftLayoutListener listener) {
+        mListener = listener;
+    }
 
     public EyesVedioLeftLayout(Context context) {
         super(context);
@@ -22,8 +29,8 @@ public class EyesVedioLeftLayout extends FloatView {
 
     public EyesVedioLeftLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mShowAnimation= initTranslateAnimation(-1,0,0,0);
-        mDismissAnimation= initTranslateAnimation(0,-1,0,0);
+        mShowAnimation = initTranslateAnimation(-1, 0, 0, 0);
+        mDismissAnimation = initTranslateAnimation(0, -1, 0, 0);
     }
 
     @Override
@@ -33,6 +40,19 @@ public class EyesVedioLeftLayout extends FloatView {
 
     @Override
     protected void initView() {
-     mBtnLock=findViewById(R.id.btn_vedio_left_layout_lock);
+        mBtnLock = findViewById(R.id.btn_vedio_left_layout_lock);
+        mBtnLock.setOnClickListener((v) -> {
+            if (mListener == null) return;
+            if (!mLocked) {
+                mLocked = true;
+                mListener.onLock();
+                mBtnLock.setBackgroundResource(R.mipmap.btn_bg_lock);
+            } else {
+                mLocked = false;
+                mListener.onUnLock();
+                mBtnLock.setBackgroundResource(R.mipmap.btn_bg_unlock);
+            }
+
+        });
     }
 }

@@ -6,4 +6,5 @@ package com.eyes3d.eyes3dplayer.listener;
  */
 public interface OnClickVedioLeftLayoutListener {
     void onLock();
+    void onUnLock();
 }

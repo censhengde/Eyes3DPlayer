@@ -176,6 +176,11 @@ public final class EyesPlayer implements LifecycleObserver {
         }
 
         @Override
+        public void addStateObserver(Object observer) {
+            mEngine.addStateObserver(observer);
+        }
+
+        @Override
         public void reset() {
             mEngine.reset();
         }

@@ -110,18 +110,21 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
     @Override
     public void start() {
         mPlayer.start();
+        super.start();
     }
 
     @Override
     public void pause() {
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
+            super.pause();
         }
     }
 
     @Override
     public void stop() {
         mPlayer.stop();
+        super.stop();
     }
 
     @Override
