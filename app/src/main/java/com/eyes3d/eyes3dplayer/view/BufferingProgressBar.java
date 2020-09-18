@@ -11,6 +11,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.R;
 
 /**
@@ -19,12 +20,18 @@ import com.eyes3d.eyes3dplayer.R;
  */
 public abstract class BufferingProgressBar extends FloatView {
 
-
     public BufferingProgressBar(Context context) {
         this(context,null);
     }
 
     public BufferingProgressBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    @Override
+    public void onPlayerCreated(PlayerController controller) {
+        if (this.isShowing()) {
+            this.dismiss();
+        }
     }
 }

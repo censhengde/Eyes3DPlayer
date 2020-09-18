@@ -7,24 +7,25 @@ import android.util.Log;
 import android.view.SurfaceView;
 
 import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 public class BasePlay2DActivity extends AppCompatActivity {
 
     private static final String TAG = "Play2DActivity";
-    private String mPath = "http://eyes3d-v2.oss.eyes3d.com.cn/236560018386452487/video/20200820171317-05386294.mp4";
-    private String mPath2 = "http://eyes3d-v2.oss.eyes3d.com.cn/201358856309964806/video/20200401141608-03071678.mp4";
+    protected String mPath = "http://eyes3d-v2.oss.eyes3d.com.cn/236560018386452487/video/20200820171317-05386294.mp4";
+    protected String mPath2 = "http://eyes3d-v2.oss.eyes3d.com.cn/201358856309964806/video/20200401141608-03071678.mp4";
     protected PlayerController mPlayerCtrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initLayout();
+//        initLayout();
     }
 
     protected void initLayout() {
         setContentView(R.layout.activity_play2d);
         SurfaceView sf = findViewById(R.id.sf);
-        mPlayerCtrl = EyesPlayer.create2D(new IjkPlayerEngine(), this,this, sf, mPath2);/*框架内部已实现LifeCycleObserver，自动处理生命周期相关事宜*/
+//        mPlayerCtrl = EyesPlayer.create2D(new IjkPlayerEngine(), this,this, sf, mPath2);/*框架内部已实现LifeCycleObserver，自动处理生命周期相关事宜*/
 
     }
 
@@ -65,6 +66,6 @@ public class BasePlay2DActivity extends AppCompatActivity {
     /*出现错误*/
     @PlayerState(state = State.ON_ERROR)
     public void onPlayError(PlayerController playerCtrl, int err) {
-
+        EyesLog.e(this,"播放出现错误");
     }
 }

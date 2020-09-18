@@ -2,7 +2,6 @@ package com.eyes3d.eyes3dplayer;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.SurfaceView;
 
@@ -50,6 +49,7 @@ public final class EyesPlayer implements LifecycleObserver {
     /*2D 四参数*/
     private void create2DEngine(PlayerEngine engine, LifecycleOwner owner, Object observer, SurfaceView view, String path) {
         commonInit(engine, owner,observer, path);
+        mPlayerEngine.setDisplay(view.getHolder());
         view.getHolder().addCallback(new SurfaceHolderCallbackImpl(mPlayerEngine));
 
     }
@@ -69,7 +69,7 @@ public final class EyesPlayer implements LifecycleObserver {
         }
 
         mPlayerEngine = engine;
-        mPlayerEngine.addStateObserver(observer);
+        mPlayerEngine.onCreate(observer);
         mPlayerEngine.setDataSource(path);
         mPlayerEngine.prepareAsync();
         mPlayerController = new PlayerControllerImpl(mPlayerEngine);
@@ -175,10 +175,10 @@ public final class EyesPlayer implements LifecycleObserver {
             mEngine.stop();
         }
 
-        @Override
-        public void addStateObserver(Object observer) {
-            mEngine.addStateObserver(observer);
-        }
+//        @Override
+//        public void onCreate(Object observer) {
+//            mEngine.onCreate(observer);
+//        }
 
         @Override
         public void reset() {

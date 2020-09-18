@@ -19,9 +19,9 @@ public class TestVedioViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_vedio_view);
         mVideoView = findViewById(R.id.eyesVedioView);
         mVideoView.addLifecycleOwner(this)
-                .setDataSource(mPath)
+                .setDataSource(mPath);
 //                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
-                .createPlayer();
+//                .createPlayer();
 
     }
 
@@ -31,9 +31,13 @@ public class TestVedioViewActivity extends AppCompatActivity {
 
     }
 
+    private boolean mfirst=true;
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
+     if (mfirst){
+         mfirst=false;
+         mVideoView.createPlayer();/*这句放到这里调用可以让缓冲条提前显示出来，用户体验更好*/
+     }
     }
 }

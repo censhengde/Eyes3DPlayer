@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.utils.AnimationUtils;
 
 /**
  * Shengde·Cen on 2020/9/4
@@ -22,8 +23,8 @@ public class EyesVideoTitleLayout extends FloatView {
 
     public EyesVideoTitleLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mDismissAnimation = initTranslateAnimation(0, 0, 0, -1);
-        mShowAnimation = initTranslateAnimation(0, 0, -1, 0);
+        mDismissAnimation = AnimationUtils.getTranslateAnimation(0, 0, 0, -1,600);
+        mShowAnimation = AnimationUtils.getTranslateAnimation(0, 0, -1, 0,600);
     }
 
     @Override

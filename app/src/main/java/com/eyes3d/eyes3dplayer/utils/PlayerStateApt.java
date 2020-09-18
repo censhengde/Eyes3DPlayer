@@ -37,7 +37,7 @@ public final class PlayerStateApt {
         for (Object observer : mObservers) {
             final SimpleArrayMap<State, Method> targetMethods = new SimpleArrayMap<>();
             Class<?> clz = observer.getClass();
-            Method[] methods = clz.getMethods();//要求注解方法必须是pubic
+            Method[] methods = clz.getDeclaredMethods();
             for (Method m : methods) {
                 PlayerState annoState = m.getAnnotation(PlayerState.class);
                 if (annoState != null) {
@@ -81,7 +81,6 @@ public final class PlayerStateApt {
                     }
                 }
             }
-
             mObserver_Methods.put(observer, targetMethods);
 
         }
@@ -102,12 +101,10 @@ public final class PlayerStateApt {
     }
 
     public void invokeOnCreate() {
-//        invokeTargetMethod(mOnCreateM);
         dispatchStateEvent(State.ON_CREATE);
     }
 
     public void invokeOnCompletion(PlayerController playerController) {
-//        invokeTargetMethod(mOnCompletionM, playerController);
         dispatchStateEvent(State.ON_COMPLETION, playerController);
     }
 
@@ -134,12 +131,10 @@ public final class PlayerStateApt {
     }
 
     public void invokeOnPrepared(PlayerController playerController) {
-//        invokeTargetMethod(mOnPreparedM, playerController);
         dispatchStateEvent(State.ON_PREPARED, playerController);
     }
 
     public void invokeOnBufferingUpdata(PlayerController playerCtrl) {
-//        invokeTargetMethod(mOnBufferingUpdateM, playerCtrl);
         dispatchStateEvent(State.ON_BUFFERING_UPDATE, playerCtrl);
     }
 

@@ -24,8 +24,8 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
     private MediaPlayer mPlayer;
     private Context mContext;
 
-   public SystemPlayerEngine(Context context) {
-       mContext=context;
+    public SystemPlayerEngine(Context context) {
+        mContext = context;
     }
 
     protected void initPlayer() {
@@ -50,18 +50,14 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
 
             return true;
         });
+        mPlayer.setOnBufferingUpdateListener((mp, percent) -> mApt.invokeOnBufferingUpdata(SystemPlayerEngine.this));
         // 播放完毕
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mApt.invokeOnCompletion(SystemPlayerEngine.this);
-            }
-        });
+        mPlayer.setOnCompletionListener(mp -> mApt.invokeOnCompletion(SystemPlayerEngine.this));
         //尺寸变化
         mPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                mApt.invokeOnVideoSizeChanged(SystemPlayerEngine.this,width, height);
+                mApt.invokeOnVideoSizeChanged(SystemPlayerEngine.this, width, height);
             }
         });
         /*拦截错误：当有错误时，true表示拦截，false=不拦截，并调用OnCompletionListener*/

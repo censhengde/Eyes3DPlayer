@@ -12,6 +12,8 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.eyes3d.eyes3dplayer.PlayerController;
+
 /**
  * Shengde·Cen on 2020/9/8
  * 说明：浮动视图抽象
@@ -59,19 +61,8 @@ public abstract class FloatView extends FrameLayout {
 
     protected abstract void initView();
 
-    protected static @NonNull
-    Animation initTranslateAnimation(float fromXValue, float toXValue, float fromYValue, float toYValue) {
-        Animation animaton = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
-                fromXValue,
-                Animation.RELATIVE_TO_SELF,
-                toXValue,
-                Animation.RELATIVE_TO_SELF,
-                fromYValue,
-                Animation.RELATIVE_TO_SELF,
-                toYValue);
-        animaton.setRepeatMode(Animation.REVERSE);
-        animaton.setDuration(600);
-        return animaton;
+    public void onPlayerCreated(PlayerController controller) {
+
     }
 
     public void show() {

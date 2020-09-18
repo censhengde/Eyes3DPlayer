@@ -11,7 +11,7 @@ public interface PlayerController {
     void pause();
 
     void stop();
-    void addStateObserver(Object observer);
+
     void reset();
     boolean isPlaying();
     long getCurrentPosition();

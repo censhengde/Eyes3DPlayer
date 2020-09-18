@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -23,7 +24,7 @@ import static com.eyes3d.eyes3dplayer.State.ON_PAUSE;
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseButton.OnPlayAndPauseListener, OnClickVedioLeftLayoutListener {
+public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLayoutListener {
 
     private static final String TAG = "Eyes2DVideoView";
     public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
@@ -41,6 +42,8 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     private BufferingProgressBar mBufferingView;
     /*暂停/播放按钮*/
     private VideoPlayAndPauseButton mPlayAndStopView;
+    /*进度*/
+    private TextView mTvProgressText;
     /*左边布局栏*/
     private EyesVedioLeftLayout mLeftLayout;
     /*右边布局栏*/
@@ -68,9 +71,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
         mBottomLayout = findViewById(R.id.vedio_bottom_layout);
         mLeftLayout = findViewById(R.id.vedio_left_layout);
         mRightLayout = findViewById(R.id.vedio_right_layout);
-
-        mPlayAndStopView.setOnPlayAndPauseListener(this);
-        mBottomLayout.setOnPlayAndPauseListener(this);
+        mTvProgressText = findViewById(R.id.tv_progress_text);
         mLeftLayout.setListener(this);
     }
 
@@ -86,15 +87,18 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     public void onPrepared(PlayerController playerCtrl) {
         Log.e(TAG, "准备完毕");
         playerCtrl.start();
-        if (mBufferingView.isShowing()) {
-            mBufferingView.dismiss();
-           }
+        mPlayAndStopView.onPlayerCreated(playerCtrl);
+        mBottomLayout.onPlayerCreated(playerCtrl);
+        mBufferingView.onPlayerCreated(playerCtrl);
+        mTitleLayout.onPlayerCreated(playerCtrl);
+        mLeftLayout.onPlayerCreated(playerCtrl);
+        mRightLayout.onPlayerCreated(playerCtrl);
     }
 
     @PlayerState(state = State.ON_START)
     public void onStartPlay() {
         EyesLog.e(this, "开始播放");
-        mPlayAndStopView.play();
+        mPlayAndStopView.onStartPlay();
         mBottomLayout.onStartPlay();
         mPlayAndStopView.autoDismiss(AUTO_DISMISS_TIME_MILLIS);
         dismissFloatViewDelayed(AUTO_DISMISS_TIME_MILLIS);
@@ -107,7 +111,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
         Log.e(TAG, "缓冲开始");
         if (!mBufferingView.isShowing()) {
             mBufferingView.show();
-           }
+        }
     }
 
     /*缓冲结束*/
@@ -120,7 +124,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     @PlayerState(state = ON_PAUSE)
     public void onPlayPause() {
         EyesLog.e(this, "播放暂停");
-        mPlayAndStopView.pause();
+        mPlayAndStopView.onPlayPause();
         mBottomLayout.onPlayPause();
     }
 
@@ -133,7 +137,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     @PlayerState(state = State.ON_COMPLETION)
     public void onCompletion(PlayerController playerCtrl) {
         Log.e(TAG, "播放完成");
-        mPlayAndStopView.pause();
+        mPlayAndStopView.onPlayPause();
         mBottomLayout.onPlayPause();
     }
 
@@ -147,9 +151,7 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     protected PlayerController initPlayer() {
         ParamsUtils.checkNotNull(mLifecycleOwner, "mLifecycleOwner 不允许为 null");
         ParamsUtils.checkNotNull(mPath, "mPath 不允许为 null");
-        PlayerController p = EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
-        mBottomLayout.mPlayerController = p;
-        return p;
+        return EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
     }
 
     /*单击屏幕*/
@@ -158,10 +160,10 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
         if (isFloatViewShowing) {
             isFloatViewShowing = false;
             dismissFloatView();
-           } else {
+        } else {
             isFloatViewShowing = true;
             showFloatView(mPlayerCtrl.isPlaying());
-           }
+        }
     }
 
     /*双击屏幕*/
@@ -170,9 +172,9 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
         if (mPlayerCtrl == null) return;
         if (mPlayerCtrl.isPlaying()) {
             mPlayerCtrl.pause();
-           } else {
+        } else {
             mPlayerCtrl.start();
-           }
+        }
     }
 
     @Override
@@ -224,27 +226,12 @@ public class Eyes2DVideoView extends BaseVideoView implements VideoPlayAndPauseB
     }
 
     @Override
-    public void onClickPlay() {
-        if (mPlayerCtrl != null && !mPlayerCtrl.isPlaying()) {
-            mPlayerCtrl.start();
-           }
-
-    }
-
-    @Override
-    public void onClickPause() {
-        if (mPlayerCtrl != null && mPlayerCtrl.isPlaying()) {
-            mPlayerCtrl.pause();
-           }
-    }
-
-    @Override
     public void onLock() {
-        Toast.makeText(mContext,"锁定屏幕",Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "锁定屏幕", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUnLock() {
-        Toast.makeText(mContext,"解锁屏幕",Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "解锁屏幕", Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,5 +1,7 @@
 package com.eyes3d.eyes3dplayer;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -11,19 +13,30 @@ import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
  */
 final class SurfaceHolderCallbackImpl implements SurfaceHolder.Callback {
     private static final String TAG = "SurfaceHolderCallback";
-    private final PlayerEngine mEngine;
+    private PlayerEngine mEngine;
+    private Handler mHandler;
 
     SurfaceHolderCallbackImpl(PlayerEngine engine) {
+        mHandler = new Handler(Looper.getMainLooper());
         mEngine = engine;
+
     }
 
+    public void setEngine(PlayerEngine engine) {
+        mEngine = engine;
+    }
 
     /*在onResume()之后调用*/
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.e(TAG, "surfaceCreated ");
+        if (mEngine == null) return;
         mEngine.setDisplay(holder);
-        mEngine.start();
+        if (!mEngine.isPlaying()) {
+            mEngine.start();
+        }
+
+
     }
 
     @Override

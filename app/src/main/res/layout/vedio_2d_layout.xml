@@ -24,6 +24,14 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
+    <!--进度文本显示-->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/sp_18"
+        android:visibility="gone" />
     <!--顶部标题栏布局-->
     <com.eyes3d.eyes3dplayer.view.EyesVideoTitleLayout
         android:id="@+id/vedio_title_layout"
@@ -51,6 +59,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_20"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dp_20" />
 </RelativeLayout>

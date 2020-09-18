@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eyes3d.eyes3dplayer.R;
+import com.eyes3d.eyes3dplayer.utils.AnimationUtils;
 
 /**
  * Shengde·Cen on 2020/9/11
@@ -17,8 +18,8 @@ public class EyesVedioRightLayout extends FloatView {
 
     public EyesVedioRightLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mShowAnimation = initTranslateAnimation(1, 0, 0, 0);
-        mDismissAnimation = initTranslateAnimation(0, 1, 0, 0);
+        mShowAnimation = AnimationUtils.getTranslateAnimation(1, 0, 0, 0,600);
+        mDismissAnimation = AnimationUtils.getTranslateAnimation(0, 1, 0, 0,600);
     }
 
     @Override

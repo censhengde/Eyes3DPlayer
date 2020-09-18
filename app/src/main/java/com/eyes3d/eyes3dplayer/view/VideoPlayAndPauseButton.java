@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
 import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
@@ -19,7 +20,6 @@ public class VideoPlayAndPauseButton extends FloatView {
     private static final String TAG = "PlayAndStopView";
     private Button mBtnPlayStop;
     private boolean mIsPlaying = false;
-    private OnPlayAndPauseListener mListener;
 
     public VideoPlayAndPauseButton(Context context) {
         super(context);
@@ -38,49 +38,36 @@ public class VideoPlayAndPauseButton extends FloatView {
     @Override
     protected void initView() {
         mBtnPlayStop = findViewById(R.id.btn_play_stop);
+
+    }
+
+    @Override
+    public void onPlayerCreated(PlayerController controller) {
         mBtnPlayStop.setOnClickListener(v -> {
-            if (mIsPlaying) {
+            if (mIsPlaying&&controller.isPlaying()) {
                 mIsPlaying = false;
-//                pause();
-                if (mListener != null) {
-                    mListener.onClickPause();
-                }
+                controller.pause();
+
             } else {
                 mIsPlaying = true;
-//                play();
-                if (mListener != null) {
-                    mListener.onClickPlay();
-                }
+                controller.start();
             }
         });
     }
 
-    public void setOnPlayAndPauseListener(OnPlayAndPauseListener listener) {
-        ParamsUtils.checkNotNull(listener,"OnPlayAndPauseListener 为null");
-        mListener = listener;
-    }
-
-
-    public void play() {
+    public void onStartPlay() {
         mIsPlaying = true;
         super.show();
         mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_play);
-
-
     }
 
-    public void pause() {
+    public void onPlayPause() {
         mIsPlaying = false;
         super.show();
         mBtnPlayStop.setBackgroundResource(R.mipmap.btn_bg_stop);
     }
 
 
-    public interface OnPlayAndPauseListener {
-        void onClickPlay();
-
-        void onClickPause();
-    }
 
     /*避免频繁点击造成消息重复*/
     private int autoDismissMessage = 0;

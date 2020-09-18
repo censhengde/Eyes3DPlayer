@@ -106,30 +106,29 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mDownX = event.getX();
-                mDownY = event.getRawY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float distX = Math.abs(event.getX() - mDownX);
-                float distY = Math.abs(event.getY() - mDownY);
-                /*水平滑动*/
-                if (distX >= distY || mHorizontalScrolled) {
-                    mHorizontalScrolled = true;
-                    this.onHorizontalScroll(event);
-                    return true;
-                } else if (distX < distY || mVerticalScrolled) {/*垂直滑动*/
-                    mVerticalScrolled = true;
-                    this.onVerticalScroll(event);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                mHorizontalScrolled = false;
-                mVerticalScrolled = false;
-                break;
-        }
-
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                mDownX = event.getX();
+//                mDownY = event.getRawY();
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                float distX = Math.abs(event.getX() - mDownX);
+//                float distY = Math.abs(event.getY() - mDownY);
+//                /*水平滑动*/
+//                if (distX >= distY || mHorizontalScrolled) {
+//                    mHorizontalScrolled = true;
+//                    this.onHorizontalScroll(event);
+//                    return true;
+//                } else if (distX < distY || mVerticalScrolled) {/*垂直滑动*/
+//                    mVerticalScrolled = true;
+//                    this.onVerticalScroll(event);
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                mHorizontalScrolled = false;
+//                mVerticalScrolled = false;
+//                break;
+//        }
         return mGestureDetector.onTouchEvent(event);
     }
 
@@ -139,7 +138,8 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         private boolean mOneTimeScroll = false;
         private final Handler mHandler;
         private int mMsgs = 0;
-
+        private boolean mHorizontalScrolled = false;
+        private boolean mVerticalScrolled = false;
         public SimpleOnGestureListenerImpl(OnScreenGestureListener listener) {
             super();
             mScreenGestureListener = listener;
@@ -166,10 +166,13 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             //这里的action只有move
             if (Math.abs(e2.getX() - e1.getX()) >= Math.abs(e2.getY() - e1.getY())) {
+                mHorizontalScrolled=true;
                 mMsgs++;
                 mHandler.postDelayed(() -> {
                     if (mMsgs == 1) {
-                        mScreenGestureListener.onHorizontalScrollUp(e2);
+                        if (mHorizontalScrolled&&!mVerticalScrolled){
+                            mScreenGestureListener.onHorizontalScrollUp(e2);
+                        }
                     }
                     mMsgs--;
                 }, 500);
@@ -178,6 +181,7 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
             //纵向滑动
             else {
                 mMsgs++;
+                mVerticalScrolled=true;
                 mHandler.postDelayed(() -> {
                     if (mMsgs == 1) {
                         mScreenGestureListener.onVerticalScrollUp(e2);

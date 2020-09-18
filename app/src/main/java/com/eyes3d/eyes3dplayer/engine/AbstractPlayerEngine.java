@@ -12,14 +12,16 @@ public abstract class AbstractPlayerEngine implements PlayerEngine {
     private static final String TAG = "AbstractPlayerEngine===========>";
     protected  final PlayerStateApt mApt =new PlayerStateApt();
 
-
+//    @Override
+//    public void onCreate(Object observer) {
+//
+//    }
 
     abstract protected void initPlayer();
 
     @Override
-    public void addStateObserver(@NonNull Object observer) {
+    public void onCreate(@NonNull Object observer) {
         mApt.addObserver(observer);
-
         // TODO: 2020/9/15 以下两句相对耗时，后续应当剥离此处
         mApt.invokeOnCreate();
         initPlayer();
