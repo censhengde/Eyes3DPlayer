@@ -14,10 +14,9 @@ import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 final class SurfaceHolderCallbackImpl implements SurfaceHolder.Callback {
     private static final String TAG = "SurfaceHolderCallback";
     private PlayerEngine mEngine;
-    private Handler mHandler;
+    private boolean mFirst = true;
 
     SurfaceHolderCallbackImpl(PlayerEngine engine) {
-        mHandler = new Handler(Looper.getMainLooper());
         mEngine = engine;
 
     }
@@ -32,7 +31,8 @@ final class SurfaceHolderCallbackImpl implements SurfaceHolder.Callback {
         Log.e(TAG, "surfaceCreated ");
         if (mEngine == null) return;
         mEngine.setDisplay(holder);
-        if (!mEngine.isPlaying()) {
+        if (!mEngine.isPlaying()&&mFirst) {
+            mFirst=false;
             mEngine.start();
         }
 

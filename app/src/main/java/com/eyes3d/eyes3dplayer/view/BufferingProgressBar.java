@@ -29,7 +29,7 @@ public abstract class BufferingProgressBar extends FloatView {
     }
 
     @Override
-    public void onPlayerCreated(PlayerController controller) {
+    public void onPlayerPrepared(PlayerController controller) {
         if (this.isShowing()) {
             this.dismiss();
         }

@@ -42,7 +42,7 @@ public class VideoPlayAndPauseButton extends FloatView {
     }
 
     @Override
-    public void onPlayerCreated(PlayerController controller) {
+    public void onPlayerPrepared(PlayerController controller) {
         mBtnPlayStop.setOnClickListener(v -> {
             if (mIsPlaying&&controller.isPlaying()) {
                 mIsPlaying = false;

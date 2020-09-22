@@ -1,26 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_video_bottom_layout_video_current_titme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_10"
+        android:gravity="center"
+        android:clickable="false"
+        android:text="@string/tv_default_00_00"
+        android:layout_marginStart="@dimen/dp_16"
+        />
+    <TextView
+        android:id="@+id/tv_video_bottom_layout_video_total_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_10"
+        android:gravity="center"
+        android:clickable="false"
+        android:layout_alignParentEnd="true"
+        android:text="@string/tv_default_00_00"
+        android:layout_marginEnd="@dimen/dp_20"
+        tools:ignore="RelativeOverlap" />
+
 
     <SeekBar
         android:id="@+id/seekbar_video_bottom_layout_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_video_bottom_layout_video_current_titme"
         android:focusable="true"
         android:maxHeight="@dimen/dp_3"
         android:minHeight="@dimen/dp_3"
+        android:layout_marginTop="@dimen/dp_6"
         android:progressDrawable="@drawable/seekbarbg"
         android:thumb="@drawable/seekbarthum110" />
+
     <Button
         android:id="@+id/btn_video_bottom_layout_play_pause"
         android:layout_width="@dimen/dp_35"
         android:layout_height="@dimen/dp_35"
+        android:layout_below="@id/seekbar_video_bottom_layout_progress_bar"
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_20"
-        android:layout_below="@id/seekbar_video_bottom_layout_progress_bar"
-        android:background="@mipmap/btn_bg_stop"
-        />
+        android:layout_marginBottom="@dimen/dp_18"
+        android:background="@mipmap/btn_bg_stop" />
 </RelativeLayout>

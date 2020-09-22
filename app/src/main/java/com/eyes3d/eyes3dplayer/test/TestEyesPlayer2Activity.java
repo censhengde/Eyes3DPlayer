@@ -19,7 +19,7 @@ public class TestEyesPlayer2Activity extends BasePlay2DActivity {
         mBuilder = EyesPlayer2.create2D()
                 .setSurfaceView(sfv)
                 .setContext(this)
-                .setOwner(this)
+                .setLifecycleOwner(this)
                 .setDataSource(mPath)
                 .setStateObserver(this);
     }

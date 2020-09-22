@@ -15,6 +15,7 @@ import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.State;
 import com.eyes3d.eyes3dplayer.listener.OnClickVedioLeftLayoutListener;
+import com.eyes3d.eyes3dplayer.utils.EyesAudioManager;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
 import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
 
@@ -49,6 +50,8 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     /*右边布局栏*/
     private EyesVedioRightLayout mRightLayout;
 
+    private EyesAudioManager mAudioManager;
+
     @Override
     protected int retRootLayout() {
         return R.layout.vedio_2d_layout;
@@ -60,6 +63,7 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
 
     public Eyes2DVideoView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initData();
     }
 
     @Override
@@ -72,7 +76,15 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         mLeftLayout = findViewById(R.id.vedio_left_layout);
         mRightLayout = findViewById(R.id.vedio_right_layout);
         mTvProgressText = findViewById(R.id.tv_progress_text);
+
         mLeftLayout.setListener(this);
+        mAudioManager = new EyesAudioManager(mContext);
+        mBottomLayout.setPlayViewWidth(getWidth());
+        mBottomLayout.setPlayViewHeight(getHeight());
+    }
+
+    private void initData() {
+
     }
 
     /*开始创建播放器*/
@@ -87,12 +99,12 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     public void onPrepared(PlayerController playerCtrl) {
         Log.e(TAG, "准备完毕");
         playerCtrl.start();
-        mPlayAndStopView.onPlayerCreated(playerCtrl);
-        mBottomLayout.onPlayerCreated(playerCtrl);
-        mBufferingView.onPlayerCreated(playerCtrl);
-        mTitleLayout.onPlayerCreated(playerCtrl);
-        mLeftLayout.onPlayerCreated(playerCtrl);
-        mRightLayout.onPlayerCreated(playerCtrl);
+        mPlayAndStopView.onPlayerPrepared(playerCtrl);
+        mBottomLayout.onPlayerPrepared(playerCtrl);
+        mBufferingView.onPlayerPrepared(playerCtrl);
+        mTitleLayout.onPlayerPrepared(playerCtrl);
+        mLeftLayout.onPlayerPrepared(playerCtrl);
+        mRightLayout.onPlayerPrepared(playerCtrl);
     }
 
     @PlayerState(state = State.ON_START)
@@ -154,9 +166,26 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         return EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
     }
 
+    @Override
+    public void onBrightnessGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        EyesLog.e(this, "亮度调节");
+    }
+
+    @Override
+    public void onVolumeGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        EyesLog.e(this, "音量调节");
+    }
+
+    @Override
+    public void onHorizontalScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        EyesLog.e(this, "onHorizontalScroll ");
+        mBottomLayout.onHorizontalScroll(e1, e2, distanceX, distanceY);
+    }
+
     /*单击屏幕*/
     @Override
     public void onSingleTapConfirmed(MotionEvent e) {
+        EyesLog.e(this, "单击");
         if (isFloatViewShowing) {
             isFloatViewShowing = false;
             dismissFloatView();
@@ -178,25 +207,12 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     @Override
-    public void onHorizontalScroll(MotionEvent e) {
-        EyesLog.e(this, "水平方向滑动");
-    }
-
-    @Override
-    public void onHorizontalScrollUp(MotionEvent e) {
-        EyesLog.e(this, "水平方向滑动Up");
+    public void onDown(MotionEvent e) {
 
     }
 
     @Override
-    public void onVerticalScroll(MotionEvent e) {
-        EyesLog.e(this, "垂直方向滑动");
-
-    }
-
-    @Override
-    public void onVerticalScrollUp(MotionEvent e) {
-        EyesLog.e(this, "垂直方向滑动Up");
+    public void onFF_REWUp(MotionEvent e) {
 
     }
 
@@ -234,4 +250,6 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     public void onUnLock() {
         Toast.makeText(mContext, "解锁屏幕", Toast.LENGTH_SHORT).show();
     }
+
+
 }

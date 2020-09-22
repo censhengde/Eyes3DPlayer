@@ -37,7 +37,7 @@ public final class PlayerStateApt {
         for (Object observer : mObservers) {
             final SimpleArrayMap<State, Method> targetMethods = new SimpleArrayMap<>();
             Class<?> clz = observer.getClass();
-            Method[] methods = clz.getDeclaredMethods();
+            Method[] methods = clz.getMethods();
             for (Method m : methods) {
                 PlayerState annoState = m.getAnnotation(PlayerState.class);
                 if (annoState != null) {

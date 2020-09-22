@@ -168,6 +168,8 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
 
     @Override
     public void setDisplay(SurfaceHolder holder) {
-        mPlayer.setDisplay(holder);
+        if (holder != null && holder.getSurface().isValid()) {
+            mPlayer.setDisplay(holder);
+        }
     }
 }

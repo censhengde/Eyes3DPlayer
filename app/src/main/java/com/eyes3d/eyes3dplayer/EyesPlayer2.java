@@ -42,7 +42,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
         protected Object mStateObserver;
         protected PlayerEngine mEngine;
         protected Context mContext;
-        protected final PlayerStateApt mApt = new PlayerStateApt();
+//        protected final PlayerStateApt mApt = new PlayerStateApt();
 
 
         public T setContext(@NotNull Context context) {
@@ -55,7 +55,7 @@ public final class EyesPlayer2 implements LifecycleObserver {
             return (T) this;
         }
 
-        public T setOwner(@NotNull LifecycleOwner owner) {
+        public T setLifecycleOwner(@NotNull LifecycleOwner owner) {
             mOwner = owner;
             mOwner.getLifecycle().addObserver(this);
             return (T) this;

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.eyes3d.eyes3dplayer.R;
-import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
 import com.eyes3d.eyes3dplayer.view.Eyes2DVideoView;
 
 public class TestVedioViewActivity extends AppCompatActivity {
@@ -19,9 +18,14 @@ public class TestVedioViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_vedio_view);
         mVideoView = findViewById(R.id.eyesVedioView);
         mVideoView.addLifecycleOwner(this)
-                .setDataSource(mPath);
-//                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
-//                .createPlayer();
+                .setDataSource(mPath).createPlayer();
+////                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
+////                .createPlayer();
+//        mVideoView.getEngineBuider()
+//                .setDataSource(mPath)
+//                .setContext(this)
+//                .setLifecycleOwner(this)
+//                .
 
     }
 
@@ -37,7 +41,7 @@ public class TestVedioViewActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
      if (mfirst){
          mfirst=false;
-         mVideoView.createPlayer();/*这句放到这里调用可以让缓冲条提前显示出来，用户体验更好*/
+//         mVideoView.createPlayer();/*这句放到这里调用可以让缓冲条提前显示出来，用户体验更好*/
      }
     }
 }

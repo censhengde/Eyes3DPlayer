@@ -61,7 +61,7 @@ public abstract class FloatView extends FrameLayout {
 
     protected abstract void initView();
 
-    public void onPlayerCreated(PlayerController controller) {
+    public void onPlayerPrepared(PlayerController controller) {
 
     }
 
