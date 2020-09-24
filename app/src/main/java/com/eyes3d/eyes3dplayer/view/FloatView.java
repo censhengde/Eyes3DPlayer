@@ -1,8 +1,10 @@
 package com.eyes3d.eyes3dplayer.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -26,6 +28,14 @@ public abstract class FloatView extends FrameLayout {
 
     private boolean mShowing = false;
 
+    public boolean isOnTouching() {
+        return mIsOnTouching;
+    }
+
+    //
+    private boolean mIsOnTouching = false;
+
+
     /*隐藏动画*/
     protected Animation mDismissAnimation;
     /*显示动画*/
@@ -45,6 +55,7 @@ public abstract class FloatView extends FrameLayout {
         this(context, attrs, defStyleAttr, 0);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public FloatView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         //内部也是调用LayoutInfate.from.....且 attachToRoot=true，意味者直接进行addView（）
@@ -52,6 +63,19 @@ public abstract class FloatView extends FrameLayout {
         // （参看inflate(int, android.view.ViewGroup, Boolean)方法）。 必须为TRUE，是因为MERGE标签里没有可用的根结点
         View.inflate(this.getContext(), retRootLayout(), this);
         this.setVisibility(GONE);/*默认不可见*/
+        setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mIsOnTouching = true;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mIsOnTouching = false;
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        });
         initView();
     }
 
@@ -134,5 +158,6 @@ public abstract class FloatView extends FrameLayout {
         });
 
     }
+
 
 }

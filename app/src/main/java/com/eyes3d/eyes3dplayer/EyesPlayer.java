@@ -153,57 +153,6 @@ public final class EyesPlayer implements LifecycleObserver {
         mGLSurfaceView = null;
     }
 
-    private static class PlayerControllerImpl implements PlayerController {
-        private final PlayerEngine mEngine;
 
-        PlayerControllerImpl(PlayerEngine engine) {
-            this.mEngine = engine;
-        }
-
-        @Override
-        public void start() {
-            mEngine.start();
-        }
-
-        @Override
-        public void pause() {
-            mEngine.pause();
-        }
-
-        @Override
-        public void stop() {
-            mEngine.stop();
-        }
-
-//        @Override
-//        public void onCreate(Object observer) {
-//            mEngine.onCreate(observer);
-//        }
-
-        @Override
-        public void reset() {
-            mEngine.reset();
-        }
-
-        @Override
-        public boolean isPlaying() {
-            return mEngine.isPlaying();
-        }
-
-        @Override
-        public long getCurrentPosition() {
-            return mEngine.getCurrentPosition();
-        }
-
-        @Override
-        public long getDuration() {
-            return mEngine.getDuration();
-        }
-
-        @Override
-        public void seekTo(int msec) {
-            mEngine.seekTo(msec);
-        }
-    }
 
 }

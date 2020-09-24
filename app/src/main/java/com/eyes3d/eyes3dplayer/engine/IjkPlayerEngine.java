@@ -20,6 +20,7 @@ public class IjkPlayerEngine extends AbstractPlayerEngine {
     /*播放器初始化、各种配置*/
     protected void initPlayer() {
         mPlayer = new IjkMediaPlayer();
+        mPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
         mPlayer.setOnPreparedListener(iMediaPlayer -> mApt.invokeOnPrepared(IjkPlayerEngine.this));
         mPlayer.setOnCompletionListener(iMediaPlayer -> mApt.invokeOnCompletion(IjkPlayerEngine.this));
 
@@ -89,16 +90,19 @@ public class IjkPlayerEngine extends AbstractPlayerEngine {
     @Override
     public void start() {
         mPlayer.start();
+        super.start();
     }
 
     @Override
     public void pause() {
         mPlayer.pause();
+        super.pause();
     }
 
     @Override
     public void stop() {
         mPlayer.stop();
+        super.stop();
     }
 
     @Override
@@ -118,6 +122,11 @@ public class IjkPlayerEngine extends AbstractPlayerEngine {
 
     @Override
     public void seekTo(int msec) throws IllegalStateException {
+        mPlayer.seekTo(msec);
+    }
+
+    @Override
+    public void seekTo(int msec, int mode) {
         mPlayer.seekTo(msec);
     }
 }

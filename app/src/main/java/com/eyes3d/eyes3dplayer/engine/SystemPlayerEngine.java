@@ -6,11 +6,13 @@ import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import java.io.IOException;
 import java.util.Map;
@@ -159,6 +161,12 @@ public final class SystemPlayerEngine extends AbstractPlayerEngine {
     @Override
     public void seekTo(int msec) throws IllegalStateException {
         mPlayer.seekTo(msec);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void seekTo(int msec, int mode) {
+        mPlayer.seekTo(msec, mode);
     }
 
     @Override

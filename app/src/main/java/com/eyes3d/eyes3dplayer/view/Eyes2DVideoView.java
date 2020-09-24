@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +82,20 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         mAudioManager = new EyesAudioManager(mContext);
         mBottomLayout.setPlayViewWidth(getWidth());
         mBottomLayout.setPlayViewHeight(getHeight());
+
+        mTitleLayout.setOnClickListener(v -> {
+                 doResetAndShowFloatView();
+        });
+        mBottomLayout.setOnClickListener(v -> {
+            EyesLog.e(this,"mBottomLayout onclick");
+                 doResetAndShowFloatView();
+        });
+        mRightLayout.setOnClickListener(v -> {
+                 doResetAndShowFloatView();
+        });
+        mLeftLayout.setOnClickListener(v -> {
+                 doResetAndShowFloatView();
+        });
     }
 
     private void initData() {
@@ -113,8 +128,7 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         mPlayAndStopView.onStartPlay();
         mBottomLayout.onStartPlay();
         mPlayAndStopView.autoDismiss(AUTO_DISMISS_TIME_MILLIS);
-        dismissFloatViewDelayed(AUTO_DISMISS_TIME_MILLIS);
-
+        doResetAndShowFloatView();
     }
 
     /*缓冲开始*/
@@ -186,12 +200,11 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     @Override
     public void onSingleTapConfirmed(MotionEvent e) {
         EyesLog.e(this, "单击");
-        if (isFloatViewShowing) {
-            isFloatViewShowing = false;
-            dismissFloatView();
+        if (mIsFloatViewShowing) {
+            dismissFloatViewNow();
         } else {
-            isFloatViewShowing = true;
-            showFloatView(mPlayerCtrl.isPlaying());
+            if (mPlayerCtrl == null) return;
+            doResetAndShowFloatView();
         }
     }
 
@@ -208,7 +221,13 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
 
     @Override
     public void onDown(MotionEvent e) {
-
+        EyesLog.e(this, "onDown===>");
+        //
+//        if (mIsFloatViewShowing) {
+//
+//            removeCallbacks(mDismissTask);
+//            postDelayed(mDismissTask,AUTO_DISMISS_TIME_MILLIS);
+//        }
     }
 
     @Override
@@ -217,28 +236,50 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
 
-    private boolean isFloatViewShowing = false;
+    private boolean mIsFloatViewShowing = false;
 
 
-    protected void showFloatView(boolean autoDismiss) {
+    /*可频繁重复调用多次*/
+    private void doResetAndShowFloatView() {
+        //每次调用意味着重置自动隐藏时间
+        removeCallbacks(mDismissTask);
         mTitleLayout.show();
         mBottomLayout.show();
         mLeftLayout.show();
         mRightLayout.show();
-        if (autoDismiss) {
-            dismissFloatViewDelayed(AUTO_DISMISS_TIME_MILLIS);
+        mIsFloatViewShowing = true;
+        /*因为各种条件导致无法及时隐藏*/
+        dismissFloatViewDelayed();
+
+    }
+
+
+    private final Runnable mDismissTask = this::dismissFloatViewNow;
+
+
+    /*立即隐藏*/
+    private void dismissFloatViewNow() {
+        mIsFloatViewShowing = false;
+        if (mTitleLayout != null) {
+            mTitleLayout.dismiss();
+        }
+        if (mBottomLayout != null) mBottomLayout.dismiss();
+        if (mLeftLayout != null)   mLeftLayout.dismiss();
+        if (mRightLayout != null)  mRightLayout.dismiss();
+    }
+
+    /*无操作5s后自动隐藏*/
+    private void dismissFloatViewDelayed() {
+        /*因为各种条件导致无法及时隐藏*/
+        if (mPlayerCtrl == null || !mPlayerCtrl.isPlaying()) return;
+        if (isAllFloatViewNoTouch()) {
+            postDelayed(mDismissTask, AUTO_DISMISS_TIME_MILLIS);
         }
     }
 
-    protected void dismissFloatViewDelayed(long delayMillis) {
-        postDelayed(this::dismissFloatView, delayMillis);
-    }
-
-    protected void dismissFloatView() {
-        mTitleLayout.dismiss();
-        mBottomLayout.dismiss();
-        mLeftLayout.dismiss();
-        mRightLayout.dismiss();
+    private boolean isAllFloatViewNoTouch() {
+        return !mTitleLayout.isOnTouching() &&! mBottomLayout.isOnTouching()
+                && !mLeftLayout.isOnTouching() && !mRightLayout.isOnTouching();
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.eyes3d.eyes3dplayer.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -15,7 +17,10 @@ import androidx.annotation.Nullable;
 import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.utils.AnimationUtils;
+import com.eyes3d.eyes3dplayer.utils.EyesLog;
 import com.eyes3d.eyes3dplayer.utils.FormatUtils;
+
+import static android.media.MediaPlayer.SEEK_CLOSEST;
 
 /**
  * Shengde·Cen on 2020/9/4
@@ -27,17 +32,28 @@ public class EyesVideoBottomLayout extends FloatView {
     /*播放暂停*/
     private Button mBtnPlayAndPause;
     private boolean mPlaying = false;
-    private TextView mTvCurrentTime, mTvTotalTime;
-    private Handler mHandler;
+    private TextView mTvCurrentTime, mTvVideoDuration;
     private PlayerController mPlayerController;
     private UpdateSeekBarRunnable mUpdateSeekBarRunnable;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private int mPlayViewWidth,
             mPlayViewHeight;
+    private boolean mIsOnTracking = false;
+    private OnTouchUpListener mTouchUpListener;
+
+    public void setTouchUpListener(OnTouchUpListener listener) {
+        this.mTouchUpListener = listener;
+    }
+
+    public interface OnTouchUpListener {
+        void onTouchUp();
+    }
 
     public EyesVideoBottomLayout(Context context) {
         super(context);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public EyesVideoBottomLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mShowAnimation = AnimationUtils.getTranslateAnimation(0, 0, 1, 0, 600);
@@ -53,13 +69,19 @@ public class EyesVideoBottomLayout extends FloatView {
 
     @Override
     protected void initView() {
+        super.setFocusable(false);
+        super.setClickable(false);
         mBtnPlayAndPause = findViewById(R.id.btn_video_bottom_layout_play_pause);
         mSeekBar = findViewById(R.id.seekbar_video_bottom_layout_progress_bar);
         mTvCurrentTime = findViewById(R.id.tv_video_bottom_layout_video_current_titme);
-        mTvTotalTime = findViewById(R.id.tv_video_bottom_layout_video_total_time);
+        mTvVideoDuration = findViewById(R.id.tv_video_bottom_layout_video_total_time);
 
-        mHandler = new Handler(Looper.getMainLooper());
-        mUpdateSeekBarRunnable=new UpdateSeekBarRunnable();
+        mUpdateSeekBarRunnable = new UpdateSeekBarRunnable();
+//        setOnClickListener(v -> {
+//               if (mTouchUpListener!=null){
+//                   mTouchUpListener.onTouchUp();
+//               }
+//        });
 
 
     }
@@ -76,16 +98,19 @@ public class EyesVideoBottomLayout extends FloatView {
     void onStartPlay() {
         mPlaying = true;
         mBtnPlayAndPause.setBackgroundResource(R.mipmap.btn_bg_play);
+//        startUpdateSeekBarTask();
+//        mSeekBar.setProgress((int) mPlayerController.getCurrentPosition());
     }
 
     void onPlayPause() {
         mPlaying = false;
         mBtnPlayAndPause.setBackgroundResource(R.mipmap.btn_bg_stop);
+
     }
 
     /*播放器准备完成*/
     public void onPlayerPrepared(PlayerController controller) {
-        mPlayerController=controller;
+        mPlayerController = controller;
         mBtnPlayAndPause.setOnClickListener((v) -> {
             if (mPlaying) {
                 mPlaying = false;
@@ -98,8 +123,10 @@ public class EyesVideoBottomLayout extends FloatView {
         });
 
         mSeekBar.setMax((int) controller.getDuration());
-        mTvTotalTime.setText(FormatUtils.mssToString(controller.getDuration()));
+        mTvVideoDuration.setText(FormatUtils.mssToString(controller.getDuration()));
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            /*fromUser:当调用setProgress（）时是false，手动拖拽时是true*/
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mTvCurrentTime.setText(FormatUtils.mssToString(progress));
@@ -107,12 +134,18 @@ public class EyesVideoBottomLayout extends FloatView {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                mIsOnTracking = true;
+                mHandler.removeCallbacks(mUpdateSeekBarRunnable);
+                EyesLog.e(this, "seekBar.getProgress()=:" + seekBar.getProgress());
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                controller.seekTo(seekBar.getProgress());
+                mIsOnTracking = false;
+                EyesLog.e(EyesVideoBottomLayout.this, "seekBar.getProgress()=:" + seekBar.getProgress());
+                controller.seekTo(seekBar.getProgress(), SEEK_CLOSEST);
+                EyesLog.e(EyesVideoBottomLayout.this, "controller.getCurrentPosition()=:" + mPlayerController.getCurrentPosition());
+                performClick();
             }
         });
 
@@ -140,11 +173,15 @@ public class EyesVideoBottomLayout extends FloatView {
 
         @Override
         public void run() {
-            if (EyesVideoBottomLayout.this.getVisibility() == GONE||mPlayerController==null){
+            if (!isShowing()
+                    || mPlayerController == null
+                    || !mPlayerController.isPlaying()) {
                 return;
             }
-           mSeekBar.setProgress((int) mPlayerController.getCurrentPosition());
-            mHandler.postDelayed(this,500);
+            long progress = mPlayerController.getCurrentPosition();
+            EyesLog.e(this, "progress：" + progress);
+            mSeekBar.setProgress((int) progress);
+            mHandler.postDelayed(mUpdateSeekBarRunnable, 500);
 
         }
     }
@@ -152,7 +189,7 @@ public class EyesVideoBottomLayout extends FloatView {
     @Override
     public void show() {
         super.show();
-        startUpdateSeekBarRunnable();
+        startUpdateSeekBarTask();
     }
 
     @Override
@@ -161,7 +198,7 @@ public class EyesVideoBottomLayout extends FloatView {
         mHandler.removeCallbacks(mUpdateSeekBarRunnable);
     }
 
-    private void startUpdateSeekBarRunnable(){
-        mHandler.postDelayed(mUpdateSeekBarRunnable,100);
+    private void startUpdateSeekBarTask() {
+        mHandler.postDelayed(mUpdateSeekBarRunnable, 100);
     }
 }

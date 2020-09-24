@@ -14,10 +14,7 @@ public abstract class AbstractPlayerEngine implements PlayerEngine {
     private static final String TAG = "AbstractPlayerEngine===========>";
     protected  final PlayerStateApt mApt =new PlayerStateApt();
 
-//    @Override
-//    public void onCreate(Object observer) {
-//
-//    }
+
 
     abstract protected void initPlayer();
 

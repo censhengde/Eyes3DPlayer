@@ -19,6 +19,7 @@ public interface PlayerController {
     long getDuration();
 
     void seekTo(int msec);
+    void seekTo(int msec, int mode);
 
 
 }

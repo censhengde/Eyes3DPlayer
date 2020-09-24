@@ -1,5 +1,6 @@
 package com.eyes3d.eyes3dplayer.utils;
 
+import android.graphics.ImageFormat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,8 +19,10 @@ public final class EyesLog {
     }
 
     public static void e(Object target, String msg) {
-        if (DEBUG && !TextUtils.isEmpty(msg)&&target!=null) {
+        if (DEBUG && !TextUtils.isEmpty(msg) && target != null) {
             Log.e(target.getClass().getSimpleName(), msg);
+        } else if (DEBUG) {
+            Log.e("EyesLog", "无效日志");
         }
     }
 }
