@@ -41,6 +41,8 @@
         android:maxHeight="@dimen/dp_3"
         android:minHeight="@dimen/dp_3"
         android:layout_marginTop="@dimen/dp_6"
+        android:paddingStart="@dimen/dp_10"
+        android:paddingEnd="@dimen/dp_14"
         android:progressDrawable="@drawable/seekbarbg"
         android:thumb="@drawable/seekbarthum110" />
 

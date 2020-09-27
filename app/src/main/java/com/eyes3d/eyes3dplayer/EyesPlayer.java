@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 public final class EyesPlayer implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
     private PlayerEngine mPlayerEngine;
-//    private PlayerController mPlayerController;
 
 
     private EyesPlayer() {
@@ -37,9 +36,6 @@ public final class EyesPlayer implements LifecycleObserver {
     @Nullable
     private GLSurfaceView mGLSurfaceView;
 
-    public PlayerEngine getEngine() {
-        return mPlayerEngine;
-    }
 
     /*2D 三参数*/
     private void create2DEngine(LifecycleOwner owner, Object observer, SurfaceView view, String path) {

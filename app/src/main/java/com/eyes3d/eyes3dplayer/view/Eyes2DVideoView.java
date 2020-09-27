@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.eyes3d.eyes3dplayer.EyesPlayer;
@@ -15,7 +14,6 @@ import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.State;
-import com.eyes3d.eyes3dplayer.listener.OnClickVedioLeftLayoutListener;
 import com.eyes3d.eyes3dplayer.utils.EyesAudioManager;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
 import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
@@ -26,7 +24,7 @@ import static com.eyes3d.eyes3dplayer.State.ON_PAUSE;
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLayoutListener {
+public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListener {
 
     private static final String TAG = "Eyes2DVideoView";
     public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
@@ -78,23 +76,22 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         mRightLayout = findViewById(R.id.vedio_right_layout);
         mTvProgressText = findViewById(R.id.tv_progress_text);
 
-        mLeftLayout.setListener(this);
+        mLeftLayout.setOnClickListener(this);
         mAudioManager = new EyesAudioManager(mContext);
         mBottomLayout.setPlayViewWidth(getWidth());
         mBottomLayout.setPlayViewHeight(getHeight());
 
         mTitleLayout.setOnClickListener(v -> {
-                 doResetAndShowFloatView();
+            doResetAndShowFloatView();
         });
         mBottomLayout.setOnClickListener(v -> {
-            EyesLog.e(this,"mBottomLayout onclick");
-                 doResetAndShowFloatView();
+            doResetAndShowFloatView();
         });
         mRightLayout.setOnClickListener(v -> {
-                 doResetAndShowFloatView();
+            doResetAndShowFloatView();
         });
         mLeftLayout.setOnClickListener(v -> {
-                 doResetAndShowFloatView();
+            doResetAndShowFloatView();
         });
     }
 
@@ -103,14 +100,14 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     /*开始创建播放器*/
-    @PlayerState(state = State.ON_CREATE)
+    @PlayerState(value = State.ON_CREATE)
     public void onPlayerCreate() {
         Log.e(TAG, "开始创建播放器");
         mBufferingView.show();//这里在Activity onResume之前调用，显示不了
     }
 
     /*准备完毕·*/
-    @PlayerState(state = State.ON_PREPARED)
+    @PlayerState(value = State.ON_PREPARED)
     public void onPrepared(PlayerController playerCtrl) {
         Log.e(TAG, "准备完毕");
         playerCtrl.start();
@@ -122,7 +119,7 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
         mRightLayout.onPlayerPrepared(playerCtrl);
     }
 
-    @PlayerState(state = State.ON_START)
+    @PlayerState(value = State.ON_START)
     public void onStartPlay() {
         EyesLog.e(this, "开始播放");
         mPlayAndStopView.onStartPlay();
@@ -132,7 +129,7 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     /*缓冲开始*/
-    @PlayerState(state = State.ON_BUFFERING_START)
+    @PlayerState(value = State.ON_BUFFERING_START)
     public void onBufferingStart(PlayerController playerCtrl) {
         Log.e(TAG, "缓冲开始");
         if (!mBufferingView.isShowing()) {
@@ -141,26 +138,26 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     /*缓冲结束*/
-    @PlayerState(state = State.ON_BUFFERING_END)
+    @PlayerState(value = State.ON_BUFFERING_END)
     public void onBufferingEnd(PlayerController playerCtrl, long currPosition) {
         Log.e(TAG, "缓冲结束: currPosition=" + currPosition);
         mBufferingView.dismiss();
     }
 
-    @PlayerState(state = ON_PAUSE)
+    @PlayerState(ON_PAUSE)
     public void onPlayPause() {
         EyesLog.e(this, "播放暂停");
         mPlayAndStopView.onPlayPause();
         mBottomLayout.onPlayPause();
     }
 
-    @PlayerState(state = State.ON_STOP)
+    @PlayerState(State.ON_STOP)
     public void onPlayStop() {
         EyesLog.e(this, "播放停止");
     }
 
     /*播放完成*/
-    @PlayerState(state = State.ON_COMPLETION)
+    @PlayerState(State.ON_COMPLETION)
     public void onCompletion(PlayerController playerCtrl) {
         Log.e(TAG, "播放完成");
         mPlayAndStopView.onPlayPause();
@@ -168,7 +165,7 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     /*出现错误*/
-    @PlayerState(state = State.ON_ERROR)
+    @PlayerState(State.ON_ERROR)
     public void onPlayError(PlayerController playerCtrl, int err) {
         mBufferingView.dismiss();
     }
@@ -264,8 +261,8 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
             mTitleLayout.dismiss();
         }
         if (mBottomLayout != null) mBottomLayout.dismiss();
-        if (mLeftLayout != null)   mLeftLayout.dismiss();
-        if (mRightLayout != null)  mRightLayout.dismiss();
+        if (mLeftLayout != null) mLeftLayout.dismiss();
+        if (mRightLayout != null) mRightLayout.dismiss();
     }
 
     /*无操作5s后自动隐藏*/
@@ -278,19 +275,44 @@ public class Eyes2DVideoView extends BaseVideoView implements OnClickVedioLeftLa
     }
 
     private boolean isAllFloatViewNoTouch() {
-        return !mTitleLayout.isOnTouching() &&! mBottomLayout.isOnTouching()
+        return !mTitleLayout.isOnTouching() && !mBottomLayout.isOnTouching()
                 && !mLeftLayout.isOnTouching() && !mRightLayout.isOnTouching();
     }
 
-    @Override
-    public void onLock() {
-        Toast.makeText(mContext, "锁定屏幕", Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onLock() {
+//        Toast.makeText(mContext, "锁定屏幕", Toast.LENGTH_SHORT).show();
+//    }
+//
+//    @Override
+//    public void onUnLock() {
+//        Toast.makeText(mContext, "解锁屏幕", Toast.LENGTH_SHORT).show();
+//    }
+
 
     @Override
-    public void onUnLock() {
-        Toast.makeText(mContext, "解锁屏幕", Toast.LENGTH_SHORT).show();
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.layout.vedio_left_layout: {
+
+                break;
+            }
+
+            case R.layout.vedio_right_layout: {
+
+                break;
+            }
+
+            case R.layout.vedio_title_layout: {
+                break;
+            }
+
+            case R.layout.vedio_bottom_layout: {
+                doResetAndShowFloatView();
+                break;
+
+            }
+        }
     }
-
-
 }

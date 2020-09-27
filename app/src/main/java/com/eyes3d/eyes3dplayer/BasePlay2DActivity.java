@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 
-import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 public class BasePlay2DActivity extends AppCompatActivity {
@@ -30,41 +29,41 @@ public class BasePlay2DActivity extends AppCompatActivity {
     }
 
     /*准备完毕·*/
-    @PlayerState(state = State.ON_PREPARED)
+    @PlayerState(value = State.ON_PREPARED)
     public void onPrepared(PlayerController playerCtrl) {
         Log.e(TAG, "播放准备完毕");
         playerCtrl.start();
     }
 
     /*缓冲开始*/
-    @PlayerState(state = State.ON_BUFFERING_START)
+    @PlayerState(value = State.ON_BUFFERING_START)
     public void onBufferingStart(PlayerController playerCtrl) {
         Log.e(TAG, "缓冲开始");
     }
 
     /*缓冲结束*/
-    @PlayerState(state = State.ON_BUFFERING_END)
+    @PlayerState(value = State.ON_BUFFERING_END)
     public void onBufferingEnd(PlayerController playerCtrl, long currPosition) {
         Log.e(TAG, "缓冲结束: currPosition=" + currPosition);
 
     }
 
     /*播放完成*/
-    @PlayerState(state = State.ON_COMPLETION)
+    @PlayerState(value = State.ON_COMPLETION)
     public void onCompletion(PlayerController playerCtrl) {
         Log.e(TAG, "播放完成");
 
     }
 
     /*尺寸改变*/
-    @PlayerState(state = State.ON_VIDEO_SIZE_CHANGED)
+    @PlayerState(value = State.ON_VIDEO_SIZE_CHANGED)
     public void onVideoSizeChanged(int width, int height) {
         Log.e(TAG, "尺寸改变" + width + "  " + height);
 
     }
 
     /*出现错误*/
-    @PlayerState(state = State.ON_ERROR)
+    @PlayerState(value = State.ON_ERROR)
     public void onPlayError(PlayerController playerCtrl, int err) {
         EyesLog.e(this,"播放出现错误");
     }

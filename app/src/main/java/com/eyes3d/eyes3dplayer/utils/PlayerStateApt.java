@@ -1,6 +1,5 @@
 package com.eyes3d.eyes3dplayer.utils;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.SimpleArrayMap;
 
@@ -8,7 +7,6 @@ import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.PlayerState;
 import com.eyes3d.eyes3dplayer.State;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ public final class PlayerStateApt {
             for (Method m : methods) {
                 PlayerState annoState = m.getAnnotation(PlayerState.class);
                 if (annoState != null) {
-                    final State state = annoState.state();
+                    final State state = annoState.value();
                     switch (state) {
                         case ON_CREATE:
                             targetMethods.put(state, m);
