@@ -15,14 +15,13 @@ import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.engine.SystemPlayerEngine;
 import com.eyes3d.eyes3dplayer.renderer.Eyes3DRenderer;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
-import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
-import com.eyes3d.eyes3dplayer.utils.PlayerStateApt;
+import com.eyes3d.eyes3dplayer.utils.ParamsChecker;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Shengde·Cen on 2020/8/14
- * 说明：旨在改进接口友好性
+ * 说明：旨在改进API易读性
  */
 public final class EyesPlayer2 implements LifecycleObserver {
     private static final String TAG = "EyesPlayer===>";
@@ -42,7 +41,6 @@ public final class EyesPlayer2 implements LifecycleObserver {
         protected Object mStateObserver;
         protected PlayerEngine mEngine;
         protected Context mContext;
-//        protected final PlayerStateApt mApt = new PlayerStateApt();
 
 
         public T setContext(@NotNull Context context) {
@@ -106,15 +104,14 @@ public final class EyesPlayer2 implements LifecycleObserver {
 
         public Eyes2DBuilder setSurfaceView(SurfaceView sf) {
             mSurfaceView = sf;
-
             return this;
         }
 
         public PlayerController create() {
             /*检查参数*/
-            ParamsUtils.checkNotNull(mStateObserver, "StateObserver 不允许为 null");
-            ParamsUtils.checkNotNull(mPath, "DataSource 不允许为 null");
-            ParamsUtils.checkNotNull(mSurfaceView, "SurfaceView 不允许为 null");
+            ParamsChecker.checkNotNull(mStateObserver, "StateObserver 不允许为 null");
+            ParamsChecker.checkNotNull(mPath, "DataSource 不允许为 null");
+            ParamsChecker.checkNotNull(mSurfaceView, "SurfaceView 不允许为 null");
             if (mEngine == null) {
                 EyesLog.e(this, "mEngine =null");
                 mEngine = new SystemPlayerEngine(mContext);
@@ -146,11 +143,11 @@ public final class EyesPlayer2 implements LifecycleObserver {
         @Override
         public PlayerController create() {
             /*检查参数*/
-            ParamsUtils.checkNotNull(mStateObserver, "StateObserver 不允许为 null");
-            ParamsUtils.checkNotNull(mPath, "DataSource 不允许为 null");
-            ParamsUtils.checkNotNull(mGLSurfaceView, "GLSurfaceView 不允许为 null");
-            ParamsUtils.checkNotNull(mContext, "Context 不允许为 null");
-            ParamsUtils.checkNotNull(mRenderer, "Eyes3DRenderer 不允许为 null");
+            ParamsChecker.checkNotNull(mStateObserver, "StateObserver 不允许为 null");
+            ParamsChecker.checkNotNull(mPath, "DataSource 不允许为 null");
+            ParamsChecker.checkNotNull(mGLSurfaceView, "GLSurfaceView 不允许为 null");
+            ParamsChecker.checkNotNull(mContext, "Context 不允许为 null");
+            ParamsChecker.checkNotNull(mRenderer, "Eyes3DRenderer 不允许为 null");
             if (mEngine == null) {
                 mEngine = new SystemPlayerEngine(mContext);
             }

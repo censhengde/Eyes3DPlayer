@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import com.eyes3d.eyes3dplayer.renderer.Eyes3DRenderer;
 import com.eyes3d.eyes3dplayer.PlayerController;
 
-import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
+import static com.eyes3d.eyes3dplayer.utils.ParamsChecker.checkNotNull;
 
 /**
  * Shengde·Cen on 2020/8/20

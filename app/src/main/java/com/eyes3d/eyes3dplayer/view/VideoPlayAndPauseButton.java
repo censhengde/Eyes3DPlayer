@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
-import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
 
 /**
  * Shengde·Cen on 2020/9/10

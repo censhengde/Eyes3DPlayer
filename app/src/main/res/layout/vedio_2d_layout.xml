@@ -35,6 +35,20 @@
         android:textColor="@color/white"
         android:textSize="@dimen/sp_18"
         android:visibility="gone" />
+    <!--亮度条-->
+    <com.eyes3d.eyes3dplayer.view.EyesBringhtnessBar
+        android:id="@+id/bringhtness_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+    <!--音量条-->
+    <com.eyes3d.eyes3dplayer.view.EyesBringhtnessBar
+        android:id="@+id/volume_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
     <!--顶部标题栏布局-->
     <com.eyes3d.eyes3dplayer.view.EyesVideoTitleLayout
         android:id="@+id/vedio_title_layout"

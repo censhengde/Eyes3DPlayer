@@ -6,8 +6,8 @@ import android.util.Log;
  * Shengde·Cen on 2020/9/9
  * 说明：
  */
-public final class ParamsUtils {
-    private ParamsUtils() {
+public final class ParamsChecker {
+    private ParamsChecker() {
     }
 
     public static void checkNotNull(Object arg, String throwMsg) {

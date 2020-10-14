@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.TextView;
 
 
@@ -16,8 +15,10 @@ import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.State;
 import com.eyes3d.eyes3dplayer.utils.EyesAudioManager;
 import com.eyes3d.eyes3dplayer.utils.EyesLog;
-import com.eyes3d.eyes3dplayer.utils.ParamsUtils;
+import com.eyes3d.eyes3dplayer.utils.ParamsChecker;
 
+import static com.eyes3d.eyes3dplayer.State.ON_BUFFERING_END;
+import static com.eyes3d.eyes3dplayer.State.ON_BUFFERING_START;
 import static com.eyes3d.eyes3dplayer.State.ON_PAUSE;
 
 /**
@@ -33,7 +34,7 @@ public class EyesVideoView extends BaseVideoView {
     /*音量条*/
     protected EyesVolumeBar mVolumeBar;
     /*屏幕亮度条*/
-    private EyesScreenBringhtnessBar mBringhtnessBar;
+    private EyesBringhtnessBar mBringhtnessBar;
     /*底部操作栏*/
     private EyesVideoBottomLayout mBottomLayout;
     /*顶部操作栏*/
@@ -75,6 +76,8 @@ public class EyesVideoView extends BaseVideoView {
         mLeftLayout = findViewById(R.id.vedio_left_layout);
         mRightLayout = findViewById(R.id.vedio_right_layout);
         mTvProgressText = findViewById(R.id.tv_progress_text);
+        mBringhtnessBar = findViewById(R.id.bringhtness_bar);
+        mVolumeBar = findViewById(R.id.volume_bar);
 
         mAudioManager = new EyesAudioManager(mContext);
 //        mBottomLayout.setPlayViewWidth(getWidth());
@@ -99,14 +102,14 @@ public class EyesVideoView extends BaseVideoView {
     }
 
     /*开始创建播放器*/
-    @PlayerState(value = State.ON_CREATE)
+    @PlayerState(State.ON_CREATE)
     public void onPlayerCreate() {
         Log.e(TAG, "开始创建播放器");
         mBufferingView.show();//这里在Activity onResume之前调用，显示不了
     }
 
     /*准备完毕·*/
-    @PlayerState(value = State.ON_PREPARED)
+    @PlayerState(State.ON_PREPARED)
     public void onPrepared(PlayerController playerCtrl) {
         Log.e(TAG, "准备完毕");
         playerCtrl.start();
@@ -118,7 +121,7 @@ public class EyesVideoView extends BaseVideoView {
         mRightLayout.onPlayerPrepared(playerCtrl);
     }
 
-    @PlayerState(value = State.ON_START)
+    @PlayerState(State.ON_START)
     public void onStartPlay() {
         EyesLog.e(this, "开始播放");
         mPlayAndStopView.onStartPlay();
@@ -128,7 +131,7 @@ public class EyesVideoView extends BaseVideoView {
     }
 
     /*缓冲开始*/
-    @PlayerState(value = State.ON_BUFFERING_START)
+    @PlayerState(ON_BUFFERING_START)
     public void onBufferingStart(PlayerController playerCtrl) {
         Log.e(TAG, "缓冲开始");
         if (!mBufferingView.isShowing()) {
@@ -137,7 +140,7 @@ public class EyesVideoView extends BaseVideoView {
     }
 
     /*缓冲结束*/
-    @PlayerState(value = State.ON_BUFFERING_END)
+    @PlayerState(ON_BUFFERING_END)
     public void onBufferingEnd(PlayerController playerCtrl, long currPosition) {
         Log.e(TAG, "缓冲结束: currPosition=" + currPosition);
         mBufferingView.dismiss();
@@ -171,8 +174,8 @@ public class EyesVideoView extends BaseVideoView {
 
     @Override
     protected PlayerController initPlayer() {
-        ParamsUtils.checkNotNull(mLifecycleOwner, "mLifecycleOwner 不允许为 null");
-        ParamsUtils.checkNotNull(mPath, "mPath 不允许为 null");
+        ParamsChecker.checkNotNull(mLifecycleOwner, "mLifecycleOwner 不允许为 null");
+        ParamsChecker.checkNotNull(mPath, "mPath 不允许为 null");
         return EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
     }
 
@@ -180,19 +183,29 @@ public class EyesVideoView extends BaseVideoView {
     @Override
     public void onBrightnessGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "亮度调节");
+        if (mBringhtnessBar == null) return;
+        if (mBringhtnessBar.getVisibility() == GONE) {
+            mBringhtnessBar.setVisibility(VISIBLE);
+        }
+        mBringhtnessBar.onAdjustGesture(e1, e2, distanceX, distanceY);
     }
 
     /*音量手势*/
     @Override
     public void onVolumeGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "音量调节");
+        if (mVolumeBar == null) return;
+        if (mVolumeBar.getVisibility() == GONE) {
+            mVolumeBar.setVisibility(VISIBLE);
+        }
+        mVolumeBar.onAdjustGesture(e1, e2, distanceX, distanceY);
     }
 
     /*快进、快退手势*/
     @Override
     public void onHorizontalScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "onHorizontalScroll ");
-        mBottomLayout.onHorizontalScroll(e1, e2, mTvProgressText,null,distanceX);
+        mBottomLayout.onHorizontalScroll(e1, e2, mTvProgressText, null, distanceX);
     }
 
     /*单击屏幕*/
@@ -226,7 +239,15 @@ public class EyesVideoView extends BaseVideoView {
 
     @Override
     public void onScrollUp(MotionEvent e) {
-         mBottomLayout.onScrollUp();
+        mBottomLayout.onScrollUp();
+        /*隐藏亮度条*/
+        if (mBringhtnessBar != null && mBringhtnessBar.getVisibility() == VISIBLE) {
+            mBringhtnessBar.setVisibility(GONE);
+        }
+        /*隐藏音量条*/
+        if (mVolumeBar != null && mVolumeBar.getVisibility() == VISIBLE) {
+            mVolumeBar.setVisibility(GONE);
+        }
     }
 
 
@@ -275,8 +296,6 @@ public class EyesVideoView extends BaseVideoView {
         return !mTitleLayout.isOnTouching() && !mBottomLayout.isOnTouching()
                 && !mLeftLayout.isOnTouching() && !mRightLayout.isOnTouching();
     }
-
-
 
 
 }

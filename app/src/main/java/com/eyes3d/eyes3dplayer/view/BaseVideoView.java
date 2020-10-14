@@ -21,7 +21,7 @@ import com.eyes3d.eyes3dplayer.listener.OnScreenGestureListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
+import static com.eyes3d.eyes3dplayer.utils.ParamsChecker.checkNotNull;
 
 /**
  * Shengde·Cen on 2020/9/1
