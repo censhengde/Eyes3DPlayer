@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".test.TestVedioViewActivity">
 
-    <com.eyes3d.eyes3dplayer.view.Eyes2DVideoView
+    <com.eyes3d.eyes3dplayer.view.EyesVideoView
         android:id="@+id/eyesVedioView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -18,11 +18,8 @@ import com.eyes3d.eyes3dplayer.engine.PlayerEngine;
 import com.eyes3d.eyes3dplayer.PlayerController;
 import com.eyes3d.eyes3dplayer.impl.OnVideoScreenGestureListener;
 import com.eyes3d.eyes3dplayer.listener.OnScreenGestureListener;
-import com.eyes3d.eyes3dplayer.utils.EyesLog;
 
 import org.jetbrains.annotations.NotNull;
-
-import kotlin.internal.HidesMembers;
 
 import static com.eyes3d.eyes3dplayer.utils.ParamsUtils.checkNotNull;
 
@@ -75,16 +72,14 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         mGestureListener = new OnVideoScreenGestureListener(this);
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(false);//禁止长按
-        setOnTouchListener((v, event) -> {
+        this.setOnTouchListener((v, event) -> {
 //            EyesLog.e(this,"setOnTouchListener 事件");
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (mGestureListener.mHasFFREW) {
-                    BaseVideoView.this.onFF_REWUp(event);
-                    mGestureListener.mHasFFREW=false;
+                    BaseVideoView.this.onScrollUp(event);
+                    mGestureListener.mHasFFREW = false;
                 }
             }
-            mGestureListener.setWidth(getWidth());
-            mGestureListener.setHeight(getHeight());
             return mGestureDetector.onTouchEvent(event);
         });
         View.inflate(context, retRootLayout(), this);
@@ -119,12 +114,6 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
     }
 
     protected abstract PlayerController initPlayer();
-
-    private float mDownX;
-    private float mDownY;
-    private boolean mHorizontalScrolled = false;
-    private boolean mVerticalScrolled = false;
-
 
 
 

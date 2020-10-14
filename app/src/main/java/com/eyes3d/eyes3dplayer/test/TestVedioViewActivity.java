@@ -6,10 +6,10 @@ import android.os.Bundle;
 
 import com.eyes3d.eyes3dplayer.R;
 import com.eyes3d.eyes3dplayer.engine.IjkPlayerEngine;
-import com.eyes3d.eyes3dplayer.view.Eyes2DVideoView;
+import com.eyes3d.eyes3dplayer.view.EyesVideoView;
 
 public class TestVedioViewActivity extends AppCompatActivity {
-    private Eyes2DVideoView mVideoView;
+    private EyesVideoView mVideoView;
     private String mPath = "http://eyes3d-v2.oss.eyes3d.com.cn/201358856309964806/video/20200401141608-03071678.mp4";
 
     @Override

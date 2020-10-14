@@ -21,27 +21,31 @@ public final class OnVideoScreenGestureListener extends GestureDetector.SimpleOn
     private static final int VOLUME = 1;//VOLUME,BRIGHTNESS,FF_REW
     private static final int BRIGHTNESS = 2;//VOLUME,BRIGHTNESS,FF_REW
     private static final int FF_REW = 3;//VOLUME,BRIGHTNESS,FF_REW
-    private int mWidth;
+    private int mParentWidth;
     private int mHeight;
+    private int mCurrentPostion = 0;
     //横向偏移检测，让快进快退不那么敏感
-    private int mOffsetX = 1;
+    private static final int MIN_OFFSET = 1;
     public boolean mHasFFREW = false;
     @ScrollMode
     private int mScrollMode;
+
     @IntDef({NONE, VOLUME, BRIGHTNESS, FF_REW})
     @Retention(RetentionPolicy.SOURCE)
     private @interface ScrollMode {
     }
-    public void setWidth(int width) {
-        mWidth = width;
+
+    public void setParentWidth(int parentWidth) {
+        mParentWidth = parentWidth;
     }
 
     public void setHeight(int height) {
         mHeight = height;
     }
 
-    public OnVideoScreenGestureListener(OnScreenGestureListener playerOnGestureListener) {
-        mPlayerOnGestureListener = playerOnGestureListener;
+    public OnVideoScreenGestureListener(OnScreenGestureListener listener) {
+
+        mPlayerOnGestureListener = listener;
     }
 
     @Override
@@ -59,13 +63,15 @@ public final class OnVideoScreenGestureListener extends GestureDetector.SimpleOn
         switch (mScrollMode) {
             case NONE:
                 //offset是让快进快退不要那么敏感的值
-                if (Math.abs(distanceX) - Math.abs(distanceY) > mOffsetX) {
+                if (Math.abs(distanceX) - Math.abs(distanceY) > MIN_OFFSET) {
                     mScrollMode = FF_REW;
                 } else {
-                    if (e1.getX() < mWidth/2.0) {
-                        mScrollMode = BRIGHTNESS;
-                    } else {
-                        mScrollMode = VOLUME;
+                    if (mParentWidth > 0) {
+                        if (e1.getX() < mParentWidth / 2.0) {
+                            mScrollMode = BRIGHTNESS;
+                        } else {
+                            mScrollMode = VOLUME;
+                        }
                     }
                 }
                 break;
@@ -91,7 +97,7 @@ public final class OnVideoScreenGestureListener extends GestureDetector.SimpleOn
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        EyesLog.e(this,"onSingleTapConfirmed");
+        EyesLog.e(this, "onSingleTapConfirmed");
         mPlayerOnGestureListener.onSingleTapConfirmed(e);
         return true;
     }

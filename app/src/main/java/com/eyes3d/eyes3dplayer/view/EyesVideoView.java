@@ -24,7 +24,7 @@ import static com.eyes3d.eyes3dplayer.State.ON_PAUSE;
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListener {
+public class EyesVideoView extends BaseVideoView {
 
     private static final String TAG = "Eyes2DVideoView";
     public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
@@ -56,11 +56,11 @@ public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListen
         return R.layout.vedio_2d_layout;
     }
 
-    public Eyes2DVideoView(Context context) {
+    public EyesVideoView(Context context) {
         super(context);
     }
 
-    public Eyes2DVideoView(Context context, AttributeSet attrs) {
+    public EyesVideoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initData();
     }
@@ -76,10 +76,9 @@ public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListen
         mRightLayout = findViewById(R.id.vedio_right_layout);
         mTvProgressText = findViewById(R.id.tv_progress_text);
 
-        mLeftLayout.setOnClickListener(this);
         mAudioManager = new EyesAudioManager(mContext);
-        mBottomLayout.setPlayViewWidth(getWidth());
-        mBottomLayout.setPlayViewHeight(getHeight());
+//        mBottomLayout.setPlayViewWidth(getWidth());
+//        mBottomLayout.setPlayViewHeight(getHeight());
 
         mTitleLayout.setOnClickListener(v -> {
             doResetAndShowFloatView();
@@ -177,20 +176,23 @@ public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListen
         return EyesPlayer.create2D(mEngine, mLifecycleOwner, this, mSurfaceView, mPath);
     }
 
+    /*亮度手势*/
     @Override
     public void onBrightnessGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "亮度调节");
     }
 
+    /*音量手势*/
     @Override
     public void onVolumeGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "音量调节");
     }
 
+    /*快进、快退手势*/
     @Override
     public void onHorizontalScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         EyesLog.e(this, "onHorizontalScroll ");
-        mBottomLayout.onHorizontalScroll(e1, e2, distanceX, distanceY);
+        mBottomLayout.onHorizontalScroll(e1, e2, mTvProgressText,null,distanceX);
     }
 
     /*单击屏幕*/
@@ -219,17 +221,12 @@ public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListen
     @Override
     public void onDown(MotionEvent e) {
         EyesLog.e(this, "onDown===>");
-        //
-//        if (mIsFloatViewShowing) {
-//
-//            removeCallbacks(mDismissTask);
-//            postDelayed(mDismissTask,AUTO_DISMISS_TIME_MILLIS);
-//        }
+        mBottomLayout.onDown(e);
     }
 
     @Override
-    public void onFF_REWUp(MotionEvent e) {
-
+    public void onScrollUp(MotionEvent e) {
+         mBottomLayout.onScrollUp();
     }
 
 
@@ -279,40 +276,7 @@ public class Eyes2DVideoView extends BaseVideoView implements View.OnClickListen
                 && !mLeftLayout.isOnTouching() && !mRightLayout.isOnTouching();
     }
 
-//    @Override
-//    public void onLock() {
-//        Toast.makeText(mContext, "锁定屏幕", Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onUnLock() {
-//        Toast.makeText(mContext, "解锁屏幕", Toast.LENGTH_SHORT).show();
-//    }
 
 
-    @Override
-    public void onClick(View v) {
 
-        switch (v.getId()) {
-            case R.layout.vedio_left_layout: {
-
-                break;
-            }
-
-            case R.layout.vedio_right_layout: {
-
-                break;
-            }
-
-            case R.layout.vedio_title_layout: {
-                break;
-            }
-
-            case R.layout.vedio_bottom_layout: {
-                doResetAndShowFloatView();
-                break;
-
-            }
-        }
-    }
 }

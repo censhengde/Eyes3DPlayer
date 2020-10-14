@@ -29,7 +29,10 @@
         android:id="@+id/tv_progress_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/vedio_title_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_10"
+        android:textColor="@color/white"
         android:textSize="@dimen/sp_18"
         android:visibility="gone" />
     <!--顶部标题栏布局-->

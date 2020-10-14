@@ -20,5 +20,5 @@ public interface OnScreenGestureListener {
     //按下手势，第一根手指按下时候调用
     public void onDown(MotionEvent e);
     //快进快退执行后的松开时候调用
-    public void onFF_REWUp(MotionEvent e);
+    public void onScrollUp(MotionEvent e);
 }
