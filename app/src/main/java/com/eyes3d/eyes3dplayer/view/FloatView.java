@@ -20,7 +20,7 @@ import com.eyes3d.eyes3dplayer.PlayerController;
  * Shengde·Cen on 2020/9/8
  * 说明：浮动视图抽象
  */
-public abstract class FloatView extends FrameLayout {
+ abstract class FloatView extends FrameLayout {
 
 
     protected abstract @LayoutRes

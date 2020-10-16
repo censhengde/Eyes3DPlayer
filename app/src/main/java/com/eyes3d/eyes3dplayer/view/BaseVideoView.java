@@ -1,6 +1,7 @@
 package com.eyes3d.eyes3dplayer.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -27,7 +28,7 @@ import static com.eyes3d.eyes3dplayer.utils.ParamsChecker.checkNotNull;
  * Shengde·Cen on 2020/9/1
  * 说明：
  */
-public abstract class BaseVideoView extends RelativeLayout implements OnScreenGestureListener {
+public abstract class BaseVideoView<T extends BaseVideoView> extends RelativeLayout implements OnScreenGestureListener {
     private static final String TAG = "VideoView===========>";
     protected Context mContext;
     @Nullable
@@ -65,6 +66,8 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         this(context, attrs, defStyleAttr, 0);
     }
 
+
+
     @SuppressLint("ClickableViewAccessibility")
     public BaseVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -74,11 +77,12 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
         mGestureDetector.setIsLongpressEnabled(false);//禁止长按
         this.setOnTouchListener((v, event) -> {
 //            EyesLog.e(this,"setOnTouchListener 事件");
+            mGestureListener.setParentWidth(getMeasuredWidth());
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (mGestureListener.mHasFFREW) {
                     BaseVideoView.this.onScrollUp(event);
-                    mGestureListener.mHasFFREW = false;
-                }
+//                if (mGestureListener.mHasFFREW) {
+//                    mGestureListener.mHasFFREW = false;
+//                }
             }
             return mGestureDetector.onTouchEvent(event);
         });
@@ -90,20 +94,20 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
 
 
     @SuppressWarnings("unchecked cast")
-    public <T extends BaseVideoView> T addLifecycleOwner(@NonNull LifecycleOwner owner) {
+    public  T addLifecycleOwner(@NonNull LifecycleOwner owner) {
         checkNotNull(owner, "LifecycleOwner不允许为null");
         this.mLifecycleOwner = owner;
         return (T) this;
     }
 
     @SuppressWarnings("unchecked cast")
-    public <T extends BaseVideoView> T setPlayerEngine(@NonNull PlayerEngine engine) {
+    public  T setPlayerEngine(@NonNull PlayerEngine engine) {
         mEngine = engine;
         return (T) this;
     }
 
     @SuppressWarnings("unchecked cast")
-    public <T extends BaseVideoView> T setDataSource(@NotNull String path) {
+    public  T setDataSource(@NotNull String path) {
         checkNotNull(path, "path 不允许为 null");
         mPath = path;
         return (T) this;
@@ -114,7 +118,6 @@ public abstract class BaseVideoView extends RelativeLayout implements OnScreenGe
     }
 
     protected abstract PlayerController initPlayer();
-
 
 
 }

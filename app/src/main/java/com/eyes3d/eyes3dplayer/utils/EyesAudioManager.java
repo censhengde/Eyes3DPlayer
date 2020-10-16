@@ -8,7 +8,7 @@ import android.media.AudioManager;
  * Shengde·Cen on 2020/9/21
  * 说明：
  */
-public class EyesAudioManager {
+public final class EyesAudioManager {
     private AudioManager mAudioManager;
     private Context mContext;
 
@@ -25,10 +25,19 @@ public class EyesAudioManager {
         }
     }
 
+    public int getStreamVolume() {
+        return mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+    }
 
     public void setStreamVolume(int volume) {
-        if (mAudioManager != null){
+        if (mAudioManager != null) {
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_PLAY_SOUND);
+        }
+    }
+    public void adjustStreamVolume(){
+        if (mAudioManager!=null){
+//            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,);
+
         }
     }
 }

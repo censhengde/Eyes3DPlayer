@@ -21,6 +21,7 @@ public class TestVedioViewActivity extends AppCompatActivity {
         mVideoView.addLifecycleOwner(this)
                 .setDataSource(mPath)
                 .setPlayerEngine(new IjkPlayerEngine())
+                .setCurrentActivity(this)
                 .createPlayer();
 ////                .setPlayerEngine(new IjkPlayerEngine())//设置播放器内核
 ////                .createPlayer();

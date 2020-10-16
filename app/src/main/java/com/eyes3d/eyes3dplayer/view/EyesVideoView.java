@@ -1,5 +1,6 @@
 package com.eyes3d.eyes3dplayer.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -7,6 +8,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
+
+import androidx.annotation.NonNull;
 
 import com.eyes3d.eyes3dplayer.EyesPlayer;
 import com.eyes3d.eyes3dplayer.PlayerController;
@@ -25,7 +28,7 @@ import static com.eyes3d.eyes3dplayer.State.ON_PAUSE;
  * Shengde·Cen on 2020/9/8
  * 说明：
  */
-public class EyesVideoView extends BaseVideoView {
+public class EyesVideoView extends BaseVideoView<EyesVideoView > {
 
     private static final String TAG = "Eyes2DVideoView";
     public static final int AUTO_DISMISS_TIME_MILLIS = 5000;
@@ -99,6 +102,13 @@ public class EyesVideoView extends BaseVideoView {
 
     private void initData() {
 
+    }
+
+
+
+    public EyesVideoView setCurrentActivity(@NonNull Activity activity) {
+        mBringhtnessBar.setCurrentActivity(activity);
+        return this;
     }
 
     /*开始创建播放器*/
@@ -187,7 +197,7 @@ public class EyesVideoView extends BaseVideoView {
         if (mBringhtnessBar.getVisibility() == GONE) {
             mBringhtnessBar.setVisibility(VISIBLE);
         }
-        mBringhtnessBar.onAdjustGesture(e1, e2, distanceX, distanceY);
+        mBringhtnessBar.onAdjustGesture(e1, e2, super.getMeasuredHeight(), distanceY);
     }
 
     /*音量手势*/
@@ -198,7 +208,7 @@ public class EyesVideoView extends BaseVideoView {
         if (mVolumeBar.getVisibility() == GONE) {
             mVolumeBar.setVisibility(VISIBLE);
         }
-        mVolumeBar.onAdjustGesture(e1, e2, distanceX, distanceY);
+        mVolumeBar.onAdjustGesture(e1, e2, super.getMeasuredHeight(), distanceY);
     }
 
     /*快进、快退手势*/

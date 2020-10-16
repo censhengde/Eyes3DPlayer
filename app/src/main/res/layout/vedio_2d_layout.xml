@@ -40,14 +40,18 @@
         android:id="@+id/bringhtness_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/vedio_title_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_10"
         android:visibility="gone" />
     <!--音量条-->
-    <com.eyes3d.eyes3dplayer.view.EyesBringhtnessBar
+    <com.eyes3d.eyes3dplayer.view.EyesVolumeBar
         android:id="@+id/volume_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/vedio_title_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_10"
         android:visibility="gone" />
     <!--顶部标题栏布局-->
     <com.eyes3d.eyes3dplayer.view.EyesVideoTitleLayout

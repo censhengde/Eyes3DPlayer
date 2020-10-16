@@ -15,13 +15,13 @@ public class TestEyesPlayer2Activity extends BasePlay2DActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_eyes_player2);
-        SurfaceView sfv = findViewById(R.id.sfv);
-        mBuilder = EyesPlayer2.create2D()
-                .setSurfaceView(sfv)
-                .setContext(this)
-                .setLifecycleOwner(this)
-                .setDataSource(mPath)
-                .setStateObserver(this);
+//        SurfaceView sfv = findViewById(R.id.sfv);
+//        mBuilder = EyesPlayer2.create2D()
+//                .setSurfaceView(sfv)
+//                .setContext(this)
+//                .setLifecycleOwner(this)
+//                .setDataSource(mPath)
+//                .setStateObserver(this);
     }
 
     private boolean mfirst = true;
@@ -29,9 +29,9 @@ public class TestEyesPlayer2Activity extends BasePlay2DActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (mfirst) {
-            mfirst = false;
-            mBuilder.create();
-        }
+//        if (mfirst) {
+//            mfirst = false;
+//            mBuilder.create();
+//        }
     }
 }
