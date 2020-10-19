@@ -27,21 +27,28 @@ abstract class EyesAdjustBar extends LinearLayoutCompat implements OnSeekBarChan
     /*显示条*/
     protected SeekBar mSeekBar;
 
+    /*将系统默认音量调节范围放大到0--100*/
+    protected int mMaxSeekBarValue = 100;
+
+    /*进度增量*/
+    protected int mDeltaProgress=0;
+    protected int mOldProgress=0;
+
     public void setSensitivity(int sensitivity) {
         mSensitivity = sensitivity;
     }
 
     /*灵敏度*/
-    protected int mSensitivity=1;
+    protected int mSensitivity = 5;
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        mDeltaProgress=progress-mOldProgress;
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+              mOldProgress=seekBar.getProgress();
     }
 
     @Override
@@ -72,5 +79,18 @@ abstract class EyesAdjustBar extends LinearLayoutCompat implements OnSeekBarChan
         super.addView(mSeekBar);
     }
 
-    abstract void onAdjustGesture(MotionEvent e1, MotionEvent e2, int parentHeight, float distanceY);
+    void onAdjustGesture(MotionEvent e1, MotionEvent e2, int parentHeight, float distanceY) {
+        final SeekBar seekBar = mSeekBar;
+        /*将整个播放界面高度MAX_SEEK_BAR_VALUE等分*/
+        final float scale = distanceY / (float) parentHeight;
+        final float offsetProgress = scale * mMaxSeekBarValue * mSensitivity;
+        int newProgress = (int) (seekBar.getProgress() + offsetProgress);
+        if (newProgress < 0) {
+            newProgress = 0;
+        }
+        if (newProgress > mMaxSeekBarValue) {
+            newProgress = mMaxSeekBarValue;
+        }
+        seekBar.setProgress(newProgress);
+    }
 }

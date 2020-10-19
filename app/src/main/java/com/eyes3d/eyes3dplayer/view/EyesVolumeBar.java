@@ -24,16 +24,14 @@ final class EyesVolumeBar extends EyesAdjustBar {
     private final EyesAudioManager mAudioManager;
     private int mMaxVolume;
 
-    /*将系统默认音量调节范围放大到0--100*/
-    private static final int MAX_SEEK_BAR_VALUE = 100;
     /*SeekBar 刻度*/
     private static final int SCALE_SEEK_BAR_VALUE = 3;
 
-    private static final boolean DEBUG=true;
+    private static final boolean DEBUG = true;
 
-    private void myLog(String msg){
-        if (DEBUG){
-            Log.e("EyesVolumeBar",msg);
+    private void myLog(String msg) {
+        if (DEBUG) {
+            Log.e("EyesVolumeBar", msg);
         }
     }
 
@@ -46,57 +44,55 @@ final class EyesVolumeBar extends EyesAdjustBar {
         mIcon.setColorFilter(Color.WHITE);
         mMaxVolume = mAudioManager.getStreamMaxVolume();
         mCurrentVolume = mAudioManager.getStreamVolume();
-        mSeekBar.setMax(MAX_SEEK_BAR_VALUE);
+        mSeekBar.setMax(mMaxSeekBarValue);
         mSeekBar.setProgress(volumeToProgress(mCurrentVolume));
 
 
     }
 
     private int volumeToProgress(int currentVolume) {
-        return (currentVolume / mMaxVolume) * MAX_SEEK_BAR_VALUE;
+        return (currentVolume / mMaxVolume) * mMaxSeekBarValue;
     }
 
     private int progressToVolume(int progress) {
-        return (progress / MAX_SEEK_BAR_VALUE) * mMaxVolume;
+        return (progress / mMaxSeekBarValue) * mMaxVolume;
     }
 
 
-    /*调节手势*/
-    void onAdjustGesture(MotionEvent e1, MotionEvent e2, int parentHeight, float distanceY) {
-        final SeekBar seekBar = mSeekBar;
-        /*将整个播放界面高度MAX_SEEK_BAR_VALUE等分*/
-        final float scale = distanceY / parentHeight;
-        final float offsetProgress = scale * MAX_SEEK_BAR_VALUE;
-//        if (Math.abs(distanceY) > scale) {
-//            /*每滑动一个灵敏度距离音量+1*/
-//            final int offset = (int) (distanceY / mSensitivity);
-//            mCurrentVolume += offset;
-//        }
-        int newProgress = (int) (seekBar.getProgress() + offsetProgress);
-        if (newProgress >= 0 && newProgress <= MAX_SEEK_BAR_VALUE) {
-            seekBar.setProgress(newProgress);
-        }
-    }
+//    /*调节手势*/
+//    void onAdjustGesture(MotionEvent e1, MotionEvent e2, int parentHeight, float distanceY) {
+//        super.onAdjustGesture(e1, e2, parentHeight, distanceY);
+//    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        super.onProgressChanged(seekBar, progress, fromUser);
         EyesLog.e(this, "progress =" + progress);
-        final float volumeScale = (float) (mMaxVolume) / MAX_SEEK_BAR_VALUE;
-        final int remainder = (progress % 10) % 2;
-        switch (remainder){
-            case 0:{
-
-            }
-            case 1:{
-
-            }
-        }
-
-        if (mAudioManager != null) {
-            mAudioManager.setStreamVolume(mCurrentVolume);
+        /*单位音量对应的进度*/
+        final float unit = (float) seekBar.getMax() / (float) (mMaxVolume);
+        /*因为unit精度问题，可能导致（int）unit*mMaxVolume小于seekBar.getMax()，所以要适当加长
+         * seekBar.getMax()方能使音量加满*/
+        myLog("(int) unit="+(int) unit);
+        int longerMax = progress + (int) unit * 2;
+        if (longerMax % (int) unit == 0) {
             mCurrentVolume++;
+            myLog("mCurrentVolume="+mCurrentVolume);
+            if (mCurrentVolume < 0) {
+                mCurrentVolume = 0;
+            }
+            if (mCurrentVolume > mMaxVolume) {
+                mCurrentVolume = mMaxVolume;
+            }
+//            if (mAudioManager != null) {
+//                mAudioManager.setStreamVolume(mCurrentVolume);
+//            }
         }
+
 
     }
 
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        super.onStartTrackingTouch(seekBar);
+    }
 }

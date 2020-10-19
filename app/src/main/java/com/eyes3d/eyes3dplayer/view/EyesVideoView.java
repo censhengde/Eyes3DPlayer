@@ -192,7 +192,7 @@ public class EyesVideoView extends BaseVideoView<EyesVideoView > {
     /*亮度手势*/
     @Override
     public void onBrightnessGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        EyesLog.e(this, "亮度调节");
+//        EyesLog.e(this, "亮度调节");
         if (mBringhtnessBar == null) return;
         if (mBringhtnessBar.getVisibility() == GONE) {
             mBringhtnessBar.setVisibility(VISIBLE);
@@ -203,7 +203,7 @@ public class EyesVideoView extends BaseVideoView<EyesVideoView > {
     /*音量手势*/
     @Override
     public void onVolumeGesture(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        EyesLog.e(this, "音量调节");
+//        EyesLog.e(this, "音量调节");
         if (mVolumeBar == null) return;
         if (mVolumeBar.getVisibility() == GONE) {
             mVolumeBar.setVisibility(VISIBLE);

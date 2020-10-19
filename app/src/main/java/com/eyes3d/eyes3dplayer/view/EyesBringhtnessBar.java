@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.SeekBar;
 
@@ -20,6 +21,13 @@ import com.eyes3d.eyes3dplayer.utils.ScreenManager;
  final class EyesBringhtnessBar extends EyesAdjustBar{
     private Activity mCurrentActivity;
 
+    private static final boolean DEBUG = true;
+
+    private void myLog(String msg) {
+        if (DEBUG) {
+            Log.e("EyesBringhtnessBar", msg);
+        }
+    }
     void setCurrentActivity(Activity activity) {
         this.mCurrentActivity = activity;
     }
@@ -29,18 +37,20 @@ import com.eyes3d.eyes3dplayer.utils.ScreenManager;
         super(context, attrs);
         mIcon.setImageResource(R.mipmap.ic_bringhtness);
         mIcon.setColorFilter(Color.WHITE);
-        mSeekBar.setMax(255);
+        mMaxSeekBarValue=255;
+        mSeekBar.setMax(mMaxSeekBarValue);
         mSeekBar.setProgress(ScreenManager.getScreenBrightness(context));
     }
 
     @Override
     void onAdjustGesture(MotionEvent e1, MotionEvent e2, int parentHeight, float distanceY) {
-
+        super.onAdjustGesture(e1, e2, parentHeight, distanceY);
     }
 
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        myLog("progress="+progress);
               if (mCurrentActivity!=null){
                   ScreenManager.setScreenBringhtness(mCurrentActivity,progress);
               }
